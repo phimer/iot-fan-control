@@ -17,19 +17,35 @@
 
 
     <div class="temp-data">
-        <div id="speed">Speed: loading </div>
         <div id="setpoint">Setpoint: loading</div>
+        <div id="mode">Mode: loading</div>
+        <br>
+        <div id="speed">Fan-Speed: loading </div>
         <div id="pressure">Pressure: loading</div>
+        <br>
+
     </div>
 
     <br>
     <div id="pressure-input-div">
         <label>Enter pressure between 0Pa and 120Pa</label><br>
         <input type="text" size="5" id="pressure-input" placeholder="10" name="pressure-input">
-        <input type="button" id="pressure-submit" value="Submit" onclick="setPressure()">
+        <input type="button" id="pressure-submit" value="Set Pressure" onclick="setPressure()">
 
         <script src="js/index.js"></script>
     </div>
+
+    <br>
+    <div id="fan-speed-input-div">
+        <label>Enter fan-speed between 0 and 100</label><br>
+        <input type="text" size="5" id="fan-speed-input" placeholder="100" name="fan-speed-input">
+        <input type="button" id="fan-speed-submit" value="Set Fan-Speed" onclick="setFanSpeed()">
+
+        <script src="js/index.js"></script>
+    </div>
+
+
+    <object id="pressure-gauge-test" data=pressure.svg type="image/svg+xml"></object>
 
 </body>
 

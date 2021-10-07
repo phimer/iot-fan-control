@@ -42,14 +42,21 @@ wss.on("connection", async ws => {
 
         let clientData = JSON.parse(data);
 
-        log("pressure set by client: " + clientData.pressure);
+        log(data)
+        log(clientData)
+
 
         let dataForFan = {};
         // { "auto": true, "pressure": 10 } `
 
-        if (clientData.mode = 'auto') {
+        if (clientData.mode === 'auto') {
+            log("pressure set by client: " + clientData.pressure);
             dataForFan.auto = true;
             dataForFan.pressure = clientData.pressure;
+        } else if (clientData.mode === 'manual') {
+            log("fan-speed set by client: " + clientData.fanSpeed);
+            dataForFan.auto = false;
+            dataForFan.speed = clientData.fanSpeed;
         }
 
         mqttClient.publish('controller/settings', JSON.stringify(dataForFan));
@@ -82,7 +89,9 @@ mqttClient.on('message', async (topic, message) => {
 
     log(mqttData)
 
+    let date = new Date();
 
+    mqttData.time = date;
 
     const result = await collection.insertOne(mqttData);
     console.log(`data saved to database`);
