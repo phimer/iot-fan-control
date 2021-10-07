@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <!-- <link rel="stylesheet" type="text/css" href="/styles/styles.css"> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="style/style.css">
+
+</head>
+
+<body>
+
+
+
+
+
+    <div class="temp-data">
+        <div id="speed">Speed: loading </div>
+        <div id="setpoint">Setpoint: loading</div>
+        <div id="pressure">Pressure: loading</div>
+    </div>
+
+    <br>
+    <div id="pressure-input-div">
+        <label>Enter pressure between 0Pa and 120Pa</label><br>
+        <input type="text" size="5" id="pressure-input" placeholder="10" name="pressure-input">
+        <input type="button" id="pressure-submit" value="Submit" onclick="setPressure()">
+
+        <script src="js/index.js"></script>
+    </div>
+
+</body>
+
+</html>

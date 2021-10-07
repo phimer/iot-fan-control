@@ -1,0 +1,6 @@
+questions:
+
+1. why is error: true in vss when auto is true
+
+2. what is setpoint
+3. why does the pressure not go over 70 when I set it to 120pa
