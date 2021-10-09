@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <!-- <link rel="stylesheet" type="text/css" href="/styles/styles.css"> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="style/style.css">
+    <script src="js/login.js"></script>
+
+</head>
+
+<body>
+
+    <div>
+        <form id="login-form">
+            <label>UserName</label><br>
+            <input type="text" size="10" id="username-input" placeholder="username" name="username-input">
+            <input type="text" size="10" id="password-input" placeholder="password" name="password-input">
+            <input type="submit" id="login-submit" value="Login">
+        </form>
+
+        <h6 id="error-message"></h6>
+    </div>
+
+
+    <script type="application/javascript">
+
+
+
+
+        $("#login-form").submit(function (e) {
+
+
+
+            var url = 'http://localhost:3000/login';
+            var username = 'username';
+            var password = 'password';
+
+            console.log("post")
+
+            $.ajax
+                ({
+                    type: "POST",
+                    url: url,
+                    dataType: 'json',
+                    async: true,
+                    headers: {
+                        "Authorization": "Basic " + btoa(username + ":" + password)
+                    },
+                    data: '{ "comment" }',
+                    success: (data, textStatus, xhr) => {
+                        console.log('response: ' + data)
+                        console.log("xhr: " + xhr.status)
+
+                        if (xhr.status === 200) {
+                            console.log(xhr.status)
+                            window.location = 'http://localhost:3000/'
+                        } else {
+
+                            $('#error-message').empty().append("wrong");
+
+                        }
+
+                    }
+                });
+            e.preventDefault();
+        });
+
+
+    </script>
+
+
+</body>
+
+</html>
