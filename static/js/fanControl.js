@@ -73,6 +73,20 @@ function setFanSpeed() {
     fanSpeedData.fanSpeed = fanSpeed;
     fanSpeedData.mode = 'manual';
 
+
+    ws.send(JSON.stringify(fanSpeedData));
+}
+
+
+function getUserStats() {
+
+
+    let fanSpeed = document.getElementById("fan-speed-input").value;
+
+
+
+
+
     ws.send(JSON.stringify(fanSpeedData));
 }
 

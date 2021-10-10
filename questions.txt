@@ -3,4 +3,12 @@ questions:
 1. why is error: true in vss when auto is true
 
 2. what is setpoint
-3. why does the pressure not go over 70 when I set it to 120pa
+3. difference between auto and manual?
+4. why does the pressure not go over 70 when I set it to 120pa
+5. when to use ajax or websockets
+6. If the fan doesn’t settle in a reasonable time, you should indicate this in your UI - what does that mean
+8. manual mode "real-time" pressure levels ?
+7. login authorization
+9. should we implement user account creation
+
+
