@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/style/style.css">
 
 
-    <script src="js/index.js"></script>
+    <script src="/js/fanControl.js"></script>
 </head>
 
 <body>
@@ -17,7 +17,7 @@
 
 
     <div id="logout-div">
-        <button class="button" onclick=login()>login</button>
+        <button class="button" onclick=logout()>logout</button>
     </div>
 
 
@@ -31,7 +31,7 @@
 
     </div>
 
-    <!-- <br>
+    <br>
     <div id="pressure-input-div">
         <label>Enter pressure between 0Pa and 120Pa</label><br>
         <input type="text" size="5" id="pressure-input" placeholder="10" name="pressure-input">
@@ -45,10 +45,10 @@
         <input type="text" size="5" id="fan-speed-input" placeholder="100" name="fan-speed-input">
         <input type="button" id="fan-speed-submit" value="Set Fan-Speed" onclick="setFanSpeed()">
 
-    </div> -->
+    </div>
 
 
-    <object id="pressure-gauge-test" data="svg/pressure.svg" type="image/svg+xml"></object>
+    <object id="pressure-gauge-test" data="/svg/pressure.svg" type="image/svg+xml"></object>
 
 
 </body>

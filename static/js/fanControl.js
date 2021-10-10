@@ -155,7 +155,7 @@ function changeSVG(pressure) {
 
 
 
-function login() {
+function logout() {
 
-    window.location.href = window.location.href + "fan-control/";
+    window.location.href = "http://localhost:3000/logout/";
 }

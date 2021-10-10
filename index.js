@@ -42,7 +42,8 @@ client.connect();
 console.log('Connected successfully to database');
 const db = client.db(dbName);
 const collection = db.collection('fan_data');
-const userCollection = db.collection('user_login_data');
+const userDataCollection = db.collection('user_data');
+const userLoginCollection = db.collection('user_login_data');
 
 const directory = path.join(__dirname, 'static');
 
@@ -85,70 +86,8 @@ mqttClient.on('message', async (topic, message) => {
 
 })
 
-app.get('/login', async (req, res) => {
 
-    var authheader = req.headers.authorization;
-
-
-
-    res.setHeader('WWW-Authenticate', 'Basic');
-    res.sendFile(path.join(directory, 'login.html'));
-})
-
-
-
-//sets authheaders?
-app.post('/login', async (req, res, next) => {
-
-    var authheader = req.headers.authorization;
-
-
-    var auth = new Buffer.from(authheader.split(' ')[1],
-        'base64').toString().split(':');
-    var user = auth[0];
-    var pass = auth[1];
-
-
-
-
-
-    if (user === 'username') {
-        // if (await authenticateUser(user, pass) === true) {
-
-        log('user authenticated')
-
-
-
-
-        //calls next middleware function in the stack
-
-
-        res.status(200)
-
-        //next();
-
-    } else {
-
-
-        log('user NOT authenticated')
-
-        res.json(JSON.stringify({ "meesage": "not-authenticated" }))
-
-        // var err = new Error('You are not authenticated!');
-        // res.setHeader('WWW-Authenticate', 'Basic');
-        // err.status = 401;
-        // return next(err);
-    }
-
-
-
-
-})
-
-
-
-
-
+//routings before authentication ++
 app.get('/logout', async (req, res) => {
 
     console.log("logout")
@@ -156,11 +95,49 @@ app.get('/logout', async (req, res) => {
 
 })
 
+app.get('/', async (req, res) => {
+
+
+
+    var authheader = req.headers.authorization;
+
+    res.status(200).sendFile(path.join(directory, 'index.html'));
+
+})
+
+app.get('/createUser', async (req, res) => {
+    res.status(200).sendFile(path.join(directory, 'createUser.html'));
+})
+
+app.post('/createUser', async (req, res) => {
+
+    let user = req.body;
+
+    console.log(`post user: ${user.name}`);
+
+
+    let hashedPassword = await hash(user.password);
+    user.password = hashedPassword;
+    console.log("userpassword: " + user.password)
+    console.log("user_name: " + user.name)
+
+
+    const result = await userLoginCollection.insertOne({ user_name: user.name, password: user.password });
+    console.log('Inserted documents =>', result);
+
+    res.status(200).json(result);
+
+
+})
+
+//routings before authentication --
+
+
 
 
 //Make sure that the middleware is declared before the routes to which the middleware should apply.
 
-//authentication start
+//authentication ++ 
 async function authentication(req, res, next) {
 
     log("authentication function")
@@ -169,20 +146,14 @@ async function authentication(req, res, next) {
     var authheader = req.headers.authorization;
 
     if (!authheader) {
-        // console.log("no auth header");
-        // var err = new Error('You are not authenticated!');
+
+        console.log("no auth header");
+        var err = new Error('You are not authenticated!');
         res.setHeader('WWW-Authenticate', 'Basic');
-        // err.status = 401;
-        // return next(err)
+        err.status = 401;
+        return next(err)
 
 
-
-
-        //send user to login site
-
-        log("no auth headers")
-
-        return res.status(401).redirect('/login');
     }
 
 
@@ -193,10 +164,15 @@ async function authentication(req, res, next) {
 
 
 
-    if (user === 'username') {
-        //if (await authenticateUser(user, pass) === true) {
+    if (await authenticateUser(user, pass) === true) {
 
-        log('user authenticated')
+        log(`user ${user} authenticated`)
+
+        let loginTime = new Date();
+
+        const result = await userDataCollection.insertOne({ user_name: user, login_time: loginTime });
+        console.log('Inserted documents =>', result);
+
 
         next(); //calls next middleware function in the stack
 
@@ -226,7 +202,9 @@ async function authenticateUser(userName, password) {
 
     let hashedPassword = await hash(password);
 
-    const getUser = await userCollection.find({ user_name: userName }).toArray();
+    const getUser = await userLoginCollection.find({ user_name: userName }).toArray();
+
+    log(getUser)
 
 
     if (getUser[0] === undefined) {
@@ -252,31 +230,28 @@ async function hash(password) {
 
 
 }
-//authentication end
+//authentication --
 
 
 
 
+//routings after authentication ++
+app.get('/fan-control', async (req, res) => {
 
 
 
+    res.status(200).sendFile(path.join(directory, 'fanControl.html'));
 
-
-//routings
-app.get('/', async (req, res) => {
-
-    log("get /")
-
-    var authheader = req.headers.authorization;
-    log(authheader)
-
-    //res.status(200).sendFile(path.join(directory, 'index.html'));
-    res.send("hello")
 })
 
+//routings after authentication --
 
 
-//websocket
+
+
+
+
+//websocket ++
 const WebSocket = require("ws");
 const wss = new WebSocket.Server({ port: 8080 });
 
@@ -316,6 +291,8 @@ wss.on("connection", async ws => {
 })
 
 
+
+//websocket --
 
 
 
