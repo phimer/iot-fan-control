@@ -7,9 +7,9 @@
     <!-- <link rel="stylesheet" type="text/css" href="/styles/styles.css"> -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="/style/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js"></script>
 
 
-    <script src="js/index.js"></script>
 </head>
 
 <body>
@@ -46,10 +46,13 @@
         <input type="button" id="fan-speed-submit" value="Set Fan-Speed" onclick="setFanSpeed()">
 
     </div> -->
+    <canvas id="pressure-chart" width="400" height="400"></canvas>
+
+    <!-- <object id="pressure-gauge-test" data="svg/pressure.svg" type="image/svg+xml"></object> -->
 
 
-    <object id="pressure-gauge-test" data="svg/pressure.svg" type="image/svg+xml"></object>
 
+    <script src="js/fanControl.js"></script>
 
 </body>
 

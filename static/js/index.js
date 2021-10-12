@@ -1,161 +1,200 @@
-let log = console.log;
+// let log = console.log;
 
-//connection to server websocket
-const ws = new WebSocket("ws://Localhost:8080");
-log("ws: ", ws);
-
-
-
-ws.addEventListener("open", () => {
-    log("connected to port 8080");
-
-})
+// //connection to server websocket
+// const ws = new WebSocket("ws://Localhost:8080");
+// log("ws: ", ws);
 
 
 
-ws.addEventListener("message", ({ data }) => {
+// ws.addEventListener("open", () => {
+//     log("connected to port 8080");
 
-    log(data);
+// })
 
-    let fanData = JSON.parse(data)
+// let timeStamps = [];
+// let pressureDataPoints = [];
 
-    showFanStats(fanData)
+// ws.addEventListener("message", ({ data }) => {
 
-    changeSVG(fanData.pressure);
+//     log(data);
 
+//     let fanData = JSON.parse(data)
 
+//     showFanStats(fanData)
 
-})
+//     changeSVG(fanData.pressure);
 
+//     //add timestamps to graph labels
 
-function showFanStats(fanData) {
-
-
-    $(document).ready(() => {
-
-        $('#setpoint').empty().append("Setpoint: " + fanData.setpoint + "<br>");
-        $('#speed').empty().append("Speed: " + fanData.speed + "%<br>");
-        $('#pressure').empty().append("Pressure: " + fanData.pressure + "<br>");
-
-        let fanMode = (fanData.auto === true) ? 'auto' : 'manual';
-        $('#mode').empty().append("Mode: " + fanMode + "<br>");
-
-    })
-
-}
-
-
-function setPressure() {
-
-
-    let pressure = document.getElementById("pressure-input").value;
-
-
-    log("sending pressure to server")
-
-    let pressureData = {};
-    pressureData.pressure = pressure;
-    pressureData.mode = 'auto';
-
-    ws.send(JSON.stringify(pressureData));
-}
-
-
-function setFanSpeed() {
-
-
-    let fanSpeed = document.getElementById("fan-speed-input").value;
-
-
-    log("sending speed to server")
-
-    let fanSpeedData = {};
-    fanSpeedData.fanSpeed = fanSpeed;
-    fanSpeedData.mode = 'manual';
-
-    ws.send(JSON.stringify(fanSpeedData));
-}
+//     changePressureGraph(fanData);
 
 
 
 
-//delete maybe
-// function roundToOneDecimalPlace(temperatureData) {
-//     return Math.round(temperatureData.averageTemperature * 10) / 10;
+// })
+
+// const changePressureGraph = async (fanData) => {
+
+//     //change time ++
+//     let date = new Date(fanData.time);
+
+//     let dateString = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+
+
+//     timeStamps.push(dateString);
+
+//     if (timeStamps.length > 10) {
+//         timeStamps.splice(0, 1);
+//     }
+//     //change time --
+
+
+//     //change pressure ++
+
+//     pressureDataPoints.push(fanData.pressure.toString());
+//     if (pressureDataPoints.length > 10) {
+//         pressureDataPoints.splice(0, 1);
+//     }
+//     //change pressure --
+
+//     //update graph
+//     pressureChart.update();
+
+// }
+
+// function showFanStats(fanData) {
+
+
+//     $(document).ready(() => {
+
+//         $('#setpoint').empty().append("Setpoint: " + fanData.setpoint + "<br>");
+//         $('#speed').empty().append("Speed: " + fanData.speed + "%<br>");
+//         $('#pressure').empty().append("Pressure: " + fanData.pressure + "<br>");
+
+//         let fanMode = (fanData.auto === true) ? 'auto' : 'manual';
+//         $('#mode').empty().append("Mode: " + fanMode + "<br>");
+
+//     })
+
+// }
+
+
+// function setPressure() {
+
+
+//     let pressure = document.getElementById("pressure-input").value;
+
+
+//     log("sending pressure to server")
+
+//     let pressureData = {};
+//     pressureData.pressure = pressure;
+//     pressureData.mode = 'auto';
+
+//     ws.send(JSON.stringify(pressureData));
+// }
+
+
+// function setFanSpeed() {
+
+
+//     let fanSpeed = document.getElementById("fan-speed-input").value;
+
+
+//     log("sending speed to server")
+
+//     let fanSpeedData = {};
+//     fanSpeedData.fanSpeed = fanSpeed;
+//     fanSpeedData.mode = 'manual';
+
+//     ws.send(JSON.stringify(fanSpeedData));
 // }
 
 
 
-//converts value into value usable in the svg
-//range = x //120 in this case
-//formatedValue = value + (x/2); //to make in positive //!!Not needed here!!
-//formatedValue = x - formatedValue -> to turn it around (20 -> 80 or 75 -> 25 for ex.)
-//svgGaugeNumber = Math.round(formatedValue * (575-175)/x) + 175;
-const formatToSvgValue = (value) => {
+
+// //delete maybe
+// // function roundToOneDecimalPlace(temperatureData) {
+// //     return Math.round(temperatureData.averageTemperature * 10) / 10;
+// // }
 
 
 
-    // let formatedValue = value + 60;
-    let formatedValue = 120 - value;
-
-
-    let svgGaugeNumber = Math.round(formatedValue * ((575 - 175) / 120)) + 175;
-
-
-    return svgGaugeNumber;
-
-}
-
-let pressureTo;
-let pressureFrom;
-
-//function changeSVG(color, pressure) {
-function changeSVG(pressure) {
-
-    let svg = document.getElementById("pressure-gauge-test").contentDocument;
-
-
-    let pressureInSvgFormat = formatToSvgValue(parseInt(pressure));
-
-
-    //gauge size
-    if (pressureTo === undefined) {
-        pressureFrom = "M500,750L500,575";
-    } else {
-        pressureFrom = pressureTo;
-    }
-
-    pressureTo = "M500,750L500," + pressureInSvgFormat;
-
-    // log("to", to);
-    // log("from", from)
-
-    svg.getElementById('gauge-animate').setAttribute('from', pressureFrom)
-    svg.getElementById('gauge-animate').setAttribute('to', pressureTo)
-    svg.getElementById('gauge-animate').beginElement();
-
-
-    // //gauge color
-    // colorTo = color;
-
-    // svg.getElementById('gauge-color-animate').setAttribute('from', colorFrom)
-    // svg.getElementById('gauge-color-animate').setAttribute('to', colorTo)
-    // svg.getElementById('gauge-color-animate').beginElement();
-
-    // //bulb color
-    // svg.getElementById('bulb-color-animate').setAttribute('from', colorFrom)
-    // svg.getElementById('bulb-color-animate').setAttribute('to', colorTo)
-    // svg.getElementById('bulb-color-animate').beginElement();
-
-    // colorFrom = colorTo;
+// //converts value into value usable in the svg
+// //range = x //120 in this case
+// //formatedValue = value + (x/2); //to make in positive //!!Not needed here!!
+// //formatedValue = x - formatedValue -> to turn it around (20 -> 80 or 75 -> 25 for ex.)
+// //svgGaugeNumber = Math.round(formatedValue * (575-175)/x) + 175;
+// const formatToSvgValue = (value) => {
 
 
 
-}
+//     // let formatedValue = value + 60;
+//     let formatedValue = 120 - value;
+
+
+//     let svgGaugeNumber = Math.round(formatedValue * ((575 - 175) / 120)) + 175;
+
+
+//     return svgGaugeNumber;
+
+// }
+
+// let pressureTo;
+// let pressureFrom;
+
+// //function changeSVG(color, pressure) {
+// function changeSVG(pressure) {
+
+//     let svg = document.getElementById("pressure-gauge-test").contentDocument;
+
+
+//     let pressureInSvgFormat = formatToSvgValue(parseInt(pressure));
+
+
+//     //gauge size
+//     if (pressureTo === undefined) {
+//         pressureFrom = "M500,750L500,575";
+//     } else {
+//         pressureFrom = pressureTo;
+//     }
+
+//     pressureTo = "M500,750L500," + pressureInSvgFormat;
+
+//     // log("to", to);
+//     // log("from", from)
+
+//     svg.getElementById('gauge-animate').setAttribute('from', pressureFrom)
+//     svg.getElementById('gauge-animate').setAttribute('to', pressureTo)
+//     svg.getElementById('gauge-animate').beginElement();
+
+
+//     // //gauge color
+//     // colorTo = color;
+
+//     // svg.getElementById('gauge-color-animate').setAttribute('from', colorFrom)
+//     // svg.getElementById('gauge-color-animate').setAttribute('to', colorTo)
+//     // svg.getElementById('gauge-color-animate').beginElement();
+
+//     // //bulb color
+//     // svg.getElementById('bulb-color-animate').setAttribute('from', colorFrom)
+//     // svg.getElementById('bulb-color-animate').setAttribute('to', colorTo)
+//     // svg.getElementById('bulb-color-animate').beginElement();
+
+//     // colorFrom = colorTo;
 
 
 
-function login() {
+// }
 
-    window.location.href = window.location.href + "fan-control/";
-}
+
+
+// function login() {
+
+//     window.location.href = window.location.href + "fan-control/";
+// }
+
+
+
+
+// //graph

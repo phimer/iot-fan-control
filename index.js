@@ -65,20 +65,26 @@ mqttClient.on('message', async (topic, message) => {
 
     let mqttData = JSON.parse(message.toString())
 
-    log(mqttData)
+
 
     let date = new Date();
 
     mqttData.time = date;
+    log(mqttData)
 
     const result = await collection.insertOne(mqttData);
-    console.log(`data saved to database`);
+    console.log(`data saved to database\n`);
+
+
+    let fanDataObj = {};
+    fanDataObj.fanData = mqttData;
+    fanDataObj.identifier = 'continous-data';
 
 
     wss.clients.forEach(async (client) => {
 
         if (client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify(mqttData));
+            client.send(JSON.stringify(fanDataObj));
 
         }
     })
@@ -258,6 +264,30 @@ const wss = new WebSocket.Server({ port: 8080 });
 
 wss.on("connection", async ws => {
     log("new client connected");
+
+
+    //load 15 most recent from db
+    const fifteenMostRecentDataPoints = await collection.find().limit(15).sort({ $natural: -1 }).toArray();
+
+
+
+
+    log("fifteenMostRecentDataPoints: " + fifteenMostRecentDataPoints.length);
+
+    log("first: " + fifteenMostRecentDataPoints[0].time);
+    log("last: " + fifteenMostRecentDataPoints[14].time);
+
+    let fanDataForInitialConnection = {};
+    fanDataForInitialConnection.fanData = fifteenMostRecentDataPoints;
+    fanDataForInitialConnection.identifier = 'initial-data';
+
+    wss.clients.forEach(async (client) => {
+
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify(fanDataForInitialConnection));
+
+        }
+    })
 
 
     ws.on("message", data => {

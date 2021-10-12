@@ -1,5 +1,12 @@
 let log = console.log;
 
+const DATAPOINTS = 15;
+
+
+
+
+
+
 //connection to server websocket
 const ws = new WebSocket("ws://Localhost:8080");
 log("ws: ", ws);
@@ -11,22 +18,101 @@ ws.addEventListener("open", () => {
 
 })
 
+let timeStamps = [];
+let pressureDataPoints = [];
+let fanSpeedDataPoints = [];
+
+
+
+
 
 
 ws.addEventListener("message", ({ data }) => {
 
-    log(data);
+    let fanDataObj = JSON.parse(data);
 
-    let fanData = JSON.parse(data)
+    if (fanDataObj.identifier === 'initial-data') {
 
-    showFanStats(fanData)
+        let fanDataPoints = fanDataObj.fanData;
 
-    changeSVG(fanData.pressure);
+        log(fanDataPoints);
+
+        showFanStats(fanDataPoints[0]);
+
+        for (let index = 14; index >= 0; index--) {
+
+            changeGraph(fanDataPoints[index]);
+
+        }
+
+
+
+
+
+    } else if (fanDataObj.identifier === 'continous-data') {
+
+        let fanDataPoint = fanDataObj.fanData;
+
+        log(fanDataPoint);
+
+
+
+        showFanStats(fanDataPoint)
+
+        //changeSVG(fanData.pressure);
+
+        //add timestamps to graph labels
+
+        changeGraph(fanDataPoint);
+
+    }
 
 
 
 })
 
+const changeGraph = async (fanData) => {
+
+    //change time ++
+    let date = new Date(fanData.time);
+
+    let hours = (date.getHours() < 10 ? '0' : '') + date.getHours();
+    let minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
+    let seconds = (date.getSeconds() < 10 ? '0' : '') + date.getSeconds();
+
+    let dateString = `${hours}:${minutes}:${seconds}`;
+
+
+    timeStamps.push(dateString);
+
+    if (timeStamps.length > DATAPOINTS) {
+        timeStamps.splice(0, 1);
+    }
+    //change time --
+
+
+    //change pressure ++
+
+    pressureDataPoints.push(fanData.pressure.toString());
+    if (pressureDataPoints.length > DATAPOINTS) {
+        pressureDataPoints.splice(0, 1);
+    }
+    //change pressure --
+
+
+
+    //change fan-speed ++
+
+    fanSpeedDataPoints.push(fanData.speed.toString());
+    if (fanSpeedDataPoints.length > DATAPOINTS) {
+        fanSpeedDataPoints.splice(0, 1);
+    }
+    //change fan-speed --
+
+    //update graph
+    pressureChart.update();
+
+}
 
 function showFanStats(fanData) {
 
@@ -72,20 +158,6 @@ function setFanSpeed() {
     let fanSpeedData = {};
     fanSpeedData.fanSpeed = fanSpeed;
     fanSpeedData.mode = 'manual';
-
-
-    ws.send(JSON.stringify(fanSpeedData));
-}
-
-
-function getUserStats() {
-
-
-    let fanSpeed = document.getElementById("fan-speed-input").value;
-
-
-
-
 
     ws.send(JSON.stringify(fanSpeedData));
 }
@@ -169,7 +241,81 @@ function changeSVG(pressure) {
 
 
 
+function login() {
+
+    window.location.href = window.location.href + "fan-control/";
+}
+
+
+
 function logout() {
 
     window.location.href = "http://localhost:3000/logout/";
 }
+
+
+
+//GRPAH//////////////////////////////////////////////////////////
+
+
+//var ctx = document.getElementById('myChart').getContext('2d');
+var ctx = $('#pressure-chart');
+var pressureChart = new Chart(ctx, {
+    type: 'line', //bar, horizontalBar, pie, line, doughnut, rada, polarArea
+    data: {
+        labels: timeStamps,
+        datasets: [{
+            label: 'PRESSURE',
+            data: pressureDataPoints,
+            backgroundColor: [
+                'white'
+            ],
+            borderColor: [
+                'cyan'
+            ],
+            borderWidth: 1,
+            yAxisID: 'yPressure'
+        },
+        {
+            label: 'FAN-SPEED',
+            data: fanSpeedDataPoints,
+            backgroundColor: [
+                'white'
+            ],
+            borderColor: [
+                'magenta'
+            ],
+            borderWidth: 1,
+            yAxisID: 'ySpeed'
+        }],
+        // hoverOffset: 4
+    },
+    options: {
+        responsive: true,
+        // maintainAspectRatio: false,
+        scales: {
+            yPressure: {
+                beginAtZero: true,
+                maxTicksLimit: 9,
+                stepSize: 10,
+                suggestedMax: 90,
+                position: 'left',
+                // display: true,
+                ticks: {
+                    callback: (value, index, values) => { return value + 'Pa' }
+                }
+
+            },
+            ySpeed: {
+                beginAtZero: true,
+                maxTicksLimit: 10,
+                stepSize: 10,
+                suggestedMax: 100,
+                position: 'right',
+                ticks: {
+                    callback: (value, index, values) => { return value + '%' }
+                }
+            }
+        }
+    }
+});
