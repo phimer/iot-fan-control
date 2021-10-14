@@ -48,6 +48,81 @@ const userLoginCollection = db.collection('user_login_data');
 const directory = path.join(__dirname, 'static');
 
 
+app.get('/testing', async (req, res) => {
+
+
+    //testing
+
+
+
+    //{ time: {"$gte": ISODate('2021-10-14T12:30:40.546') }}
+
+    const dataArray = await collection.aggregate(
+        [
+            {
+                $group:
+                {
+                    _id: {
+                        day: "$day",
+                        hour: "$hour",
+                        minute: "$minute"
+                    }, //make multiple ids
+                    avgSpeed: { $avg: "$speed" },
+                    avgPressure: { $avg: "$pressure" }
+                }
+            }
+        ]
+    ).toArray();
+    //test aggregate
+    //     const dataArray = await collection.aggregate(
+    //         {
+    //             //$match: {
+    //             "time": {
+    //                 $gte: "2021-10-14T14:59:41.546",
+    //                 $lt: "2021-10-14T20:01:36.103"
+    //             }
+    //         }},
+    //     //}
+    //     //}
+    //     {
+    //         $group: {
+    //             "_id": "time",
+    //             speedAVG: { $avg: "speed" }
+    //         }
+    //     }
+    //     // {
+    //     //     "$group": {
+    //     //         "_id": null,
+    //     //         "salesPerHour": { "$avg": "$salesPerHour" }
+    //     //     }
+
+    // ).toArray();
+
+
+    log("############SPEED AVG############", dataArray)
+
+    // dataArray.forEach(elem => {
+
+    //     let date = new Date(elem.time);
+
+
+
+    // })
+
+
+    // var localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);
+
+
+
+    //testind end
+
+
+
+
+})
+
+
+
 //mqtt
 var mqtt = require('mqtt')
 var mqttClient = mqtt.connect('mqtt://127.0.0.1:1883')
@@ -66,10 +141,20 @@ mqttClient.on('message', async (topic, message) => {
     let mqttData = JSON.parse(message.toString())
 
 
+    var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+    var localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);
 
-    let date = new Date();
+    //console.log(localISOTime)  // => '2015-01-26T06:40:36.181'
 
-    mqttData.time = date;
+    let dateSplits = localISOTime.split('T');
+    log("day:  " + dateSplits[0])
+
+    log("DATE: " + localISOTime);
+
+    mqttData.time = localISOTime;
+    mqttData.day = dateSplits[0];
+    mqttData.hour = dateSplits[1].split(':')[0];
+    mqttData.minute = dateSplits[1].split(':')[1];
     log(mqttData)
 
     const result = await collection.insertOne(mqttData);
@@ -129,7 +214,7 @@ app.post('/createUser', async (req, res) => {
 
 
     const result = await userLoginCollection.insertOne({ user_name: user.name, password: user.password });
-    console.log('Inserted documents =>', result);
+    //console.log('Inserted documents =>', result);
 
     res.status(200).json(result);
 
@@ -177,7 +262,7 @@ async function authentication(req, res, next) {
         let loginTime = new Date();
 
         const result = await userDataCollection.insertOne({ user_name: user, login_time: loginTime });
-        console.log('Inserted documents =>', result);
+        //console.log('Inserted documents =>', result);
 
 
         next(); //calls next middleware function in the stack
@@ -210,17 +295,17 @@ async function authenticateUser(userName, password) {
 
     const getUser = await userLoginCollection.find({ user_name: userName }).toArray();
 
-    log(getUser)
+    //log(getUser)
 
 
     if (getUser[0] === undefined) {
         console.log("No user exists with that name")
         return false;
     }
-    console.log("user password: " + getUser[0].password);
+    //console.log("user password: " + getUser[0].password);
 
     if (getUser[0].password === hashedPassword) {
-        console.log(`User: ${getUser[0].user_name} is authenticated - passwords match`);
+        //console.log(`User: ${getUser[0].user_name} is authenticated - passwords match`);
         return true;
     } else {
         return false;
@@ -230,7 +315,7 @@ async function authenticateUser(userName, password) {
 async function hash(password) {
 
     const key = await pbkdf2(password, 'salt', 100000, 64, 'sha512').catch(err => console.log(err));
-    console.log("key: " + key.toString('hex'))
+    // console.log("key: " + key.toString('hex'))
     return key.toString('hex');
 
 
@@ -272,10 +357,10 @@ wss.on("connection", async ws => {
 
 
 
-    log("fifteenMostRecentDataPoints: " + fifteenMostRecentDataPoints.length);
+    // log("fifteenMostRecentDataPoints: " + fifteenMostRecentDataPoints.length);
 
-    log("first: " + fifteenMostRecentDataPoints[0].time);
-    log("last: " + fifteenMostRecentDataPoints[14].time);
+    // log("first: " + fifteenMostRecentDataPoints[0].time);
+    // log("last: " + fifteenMostRecentDataPoints[14].time);
 
     let fanDataForInitialConnection = {};
     fanDataForInitialConnection.fanData = fifteenMostRecentDataPoints;
@@ -290,28 +375,88 @@ wss.on("connection", async ws => {
     })
 
 
-    ws.on("message", data => {
+    ws.on("message", async data => {
 
         let clientData = JSON.parse(data);
 
-        log(data)
+        // log(data)
         log(clientData)
 
+        if (clientData.identifier === 'fan-data') {
 
-        let dataForFan = {};
-        // { "auto": true, "pressure": 10 } `
+            let dataForFan = {};
+            // { "auto": true, "pressure": 10 } `
 
-        if (clientData.mode === 'auto') {
-            log("pressure set by client: " + clientData.pressure);
-            dataForFan.auto = true;
-            dataForFan.pressure = clientData.pressure;
-        } else if (clientData.mode === 'manual') {
-            log("fan-speed set by client: " + clientData.fanSpeed);
-            dataForFan.auto = false;
-            dataForFan.speed = clientData.fanSpeed;
+            if (clientData.mode === 'auto') {
+                log("pressure set by client: " + clientData.pressure);
+                dataForFan.auto = true;
+                dataForFan.pressure = clientData.pressure;
+            } else if (clientData.mode === 'manual') {
+                log("fan-speed set by client: " + clientData.fanSpeed);
+                dataForFan.auto = false;
+                dataForFan.speed = clientData.fanSpeed;
+            }
+
+            mqttClient.publish('controller/settings', JSON.stringify(dataForFan));
+
+        } else if (clientData.identifier === 'time-period-data') {
+
+            let from = '2021-10-14T' + clientData.from + ':00.202'
+            log("from: " + from)
+
+
+            let to = '2021-10-14T' + clientData.to + ':00.202'
+            log("to: " + to)
+
+
+            //get data from db for time period
+            const fanDataFromDB = await collection.find({ time: { $gte: from, $lt: to } }).toArray();
+
+            log("fanDataFromDB: ", fanDataFromDB);
+
+            let fanDataForTimePeriod = {};
+            fanDataForTimePeriod.identifier = 'time-period-data';
+            fanDataForTimePeriod.fanData = fanDataFromDB;
+
+
+            log("send")
+
+            wss.clients.forEach(async (client) => {
+
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify(fanDataForTimePeriod));
+
+                }
+            })
+
+
+
+
+        } else if (clientData.identifier === 'most-recent-data') {
+
+            //send 15 most recent datapoints
+
+            let numberOfDataPoints = clientData.numberOfDataPoints;
+
+            //load 15 most recent from db
+            const mostRecentDataPoints = await collection.find().limit(numberOfDataPoints).sort({ $natural: -1 }).toArray();
+
+
+            let fanDataWithMostRecentDataPoints = {};
+            fanDataWithMostRecentDataPoints.fanData = mostRecentDataPoints;
+            fanDataWithMostRecentDataPoints.identifier = 'most-recent-data';
+
+            wss.clients.forEach(async (client) => {
+
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify(fanDataWithMostRecentDataPoints));
+
+                }
+            })
+
+
+
         }
-
-        mqttClient.publish('controller/settings', JSON.stringify(dataForFan));
     })
 
 
@@ -376,3 +521,5 @@ app.use(function (req, res, next) {
 app.listen(3000, () => {
     console.log(`App listening at http://localhost:3000`)
 })
+
+

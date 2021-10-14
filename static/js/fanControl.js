@@ -3,7 +3,7 @@ let log = console.log;
 const DATAPOINTS = 15;
 
 
-
+let GRAPH_IS_IN_CONTINOUS_MODE = true;
 
 
 
@@ -29,7 +29,11 @@ let fanSpeedDataPoints = [];
 
 ws.addEventListener("message", ({ data }) => {
 
+    log("PORT BOOLEAN = " + GRAPH_IS_IN_CONTINOUS_MODE);
+
     let fanDataObj = JSON.parse(data);
+
+
 
     if (fanDataObj.identifier === 'initial-data') {
 
@@ -39,13 +43,15 @@ ws.addEventListener("message", ({ data }) => {
 
         showFanStats(fanDataPoints[0]);
 
-        for (let index = 14; index >= 0; index--) {
+        changeGraphMulti(fanDataPoints, false, true, false);
 
-            changeGraph(fanDataPoints[index]);
+        // for (let index = 14; index >= 0; index--) {
 
-        }
+        //     changeGraphSingle(fanDataPoints[index]);
 
+        // }
 
+        fanChart.update();
 
 
 
@@ -55,15 +61,40 @@ ws.addEventListener("message", ({ data }) => {
 
         log(fanDataPoint);
 
-
-
         showFanStats(fanDataPoint)
 
-        //changeSVG(fanData.pressure);
+        //if user is looking at aggregated data -> disable adding of new data points
+        if (GRAPH_IS_IN_CONTINOUS_MODE) {
 
-        //add timestamps to graph labels
+            log('GRAPH_IS_IN_CONTINOUS_MODE = true')
 
-        changeGraph(fanDataPoint);
+
+
+            //add point to graph
+            changeGraphSingle(fanDataPoint, false);
+
+        }
+
+    } else if (fanDataObj.identifier === 'time-period-data') {
+        log("time period data")
+
+
+        changeGraphMulti(fanDataObj.fanData, true, false, true);
+
+        GRAPH_IS_IN_CONTINOUS_MODE = false;
+
+    } else if (fanDataObj.identifier === 'most-recent-data') {
+
+        let fanDataPoints = fanDataObj.fanData;
+
+        log(fanDataPoints);
+
+        showFanStats(fanDataPoints[0]);
+
+        changeGraphMulti(fanDataPoints, true, true, true);
+
+
+        fanChart.update();
 
     }
 
@@ -71,17 +102,81 @@ ws.addEventListener("message", ({ data }) => {
 
 })
 
-const changeGraph = async (fanData) => {
+
+
+const changeGraphMulti = async (fanDataPoints, resetGraph, reverseDataArray, smallGraphPoints) => {
+
+
+    if (reverseDataArray) { fanDataPoints = fanDataPoints.reverse(); }
+    //array has to be reversed
+
+
+    if (resetGraph) {
+
+        log("reset")
+        //clear dataPoints
+        timeStamps = [];
+        pressureDataPoints = [];
+        fanSpeedDataPoints = [];
+
+        fanChart.data.labels = timeStamps;
+        fanChart.data.datasets[0].data = pressureDataPoints;
+        fanChart.data.datasets[1].data = fanSpeedDataPoints;
+
+        // //if time-period data comes in it has to be reversed again, dont know why
+        // fanDataPoints = fanDataPoints.reverse();
+
+
+    }
+
+
+    log("timestampts: ", timeStamps)
+
+    log(fanDataPoints)
+
+
+
+
+    fanDataPoints.forEach(elem => {
+
+        let dateString = createDateString(elem.time);
+
+
+        timeStamps.push(dateString);
+
+        pressureDataPoints.push(elem.pressure.toString());
+
+        fanSpeedDataPoints.push(elem.speed.toString());
+
+
+    })
+
+    if (smallGraphPoints) {
+
+        changeGraphPointSize(0);
+
+    } else {
+        changeGraphPointSize(2);
+
+    }
+
+
+
+    // log("timeStamps: ", timeStamps)
+    // log("pressureDataPoints: ", pressureDataPoints)
+    // log('fanSpeedDataPoints: ', fanSpeedDataPoints)
+
+    //update graph
+    fanChart.update();
+
+}
+
+
+const changeGraphSingle = async (fanData, smallGraphPoints) => {
 
     //change time ++
-    let date = new Date(fanData.time);
 
-    let hours = (date.getHours() < 10 ? '0' : '') + date.getHours();
-    let minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
-    let seconds = (date.getSeconds() < 10 ? '0' : '') + date.getSeconds();
-
-    let dateString = `${hours}:${minutes}:${seconds}`;
-
+    let dateString = createDateString(fanData.time);
 
     timeStamps.push(dateString);
 
@@ -109,10 +204,51 @@ const changeGraph = async (fanData) => {
     }
     //change fan-speed --
 
+
+
+    if (smallGraphPoints) {
+
+        changeGraphPointSize(0.5);
+
+    } else {
+        changeGraphPointSize(2);
+
+    }
+
+
+
     //update graph
-    pressureChart.update();
+    fanChart.update();
 
 }
+
+const changeGraphPointSize = (pointRadius, hoverSize) => {
+
+
+
+    //change size of graph points
+    fanChart.data.datasets[0].pointRadius = pointRadius;
+    fanChart.data.datasets[1].pointRadius = pointRadius;
+
+
+
+}
+
+const createDateString = (time) => {
+    let date = new Date(time);
+
+    let month = (date.getMonth());
+    let day = date.getDay();
+
+    let hours = (date.getHours() < 10 ? '0' : '') + date.getHours();
+    let minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
+    let seconds = (date.getSeconds() < 10 ? '0' : '') + date.getSeconds();
+
+    let dateString = `${day}.${month} - ${hours}:${minutes}:${seconds}`;
+
+    return dateString;
+}
+
 
 function showFanStats(fanData) {
 
@@ -142,8 +278,13 @@ function setPressure() {
     let pressureData = {};
     pressureData.pressure = pressure;
     pressureData.mode = 'auto';
+    pressureData.identifier = 'fan-data';
 
     ws.send(JSON.stringify(pressureData));
+
+    //change graph to recent data points (if user is looking at time data and sets new pressure graph should update)
+    //not sure if graph should update or not??
+    showCurrentDataInGraph();
 }
 
 
@@ -158,86 +299,56 @@ function setFanSpeed() {
     let fanSpeedData = {};
     fanSpeedData.fanSpeed = fanSpeed;
     fanSpeedData.mode = 'manual';
+    fanSpeedData.identifier = 'fan-data';
 
     ws.send(JSON.stringify(fanSpeedData));
+
+    //change graph to recent data points (if user is looking at time data and sets new pressure graph should update)
+    //not sure if graph should update or not??
+    showCurrentDataInGraph();
 }
 
 
+//user sets time period
+//server sends back data for that time perdiod
+//closes websocket connection (in websocket function)
+function setTimePeriod() {
 
 
-//delete maybe
-// function roundToOneDecimalPlace(temperatureData) {
-//     return Math.round(temperatureData.averageTemperature * 10) / 10;
-// }
+    let from = document.getElementById("time-period-from-input").value;
+    let to = document.getElementById("time-period-to-input").value;
 
+    log("from: " + from)
 
+    let timePeriodData = {};
+    timePeriodData.from = from;
+    timePeriodData.to = to;
+    timePeriodData.identifier = 'time-period-data';
 
-//converts value into value usable in the svg
-//range = x //120 in this case
-//formatedValue = value + (x/2); //to make in positive //!!Not needed here!!
-//formatedValue = x - formatedValue -> to turn it around (20 -> 80 or 75 -> 25 for ex.)
-//svgGaugeNumber = Math.round(formatedValue * (575-175)/x) + 175;
-const formatToSvgValue = (value) => {
+    ws.send(JSON.stringify(timePeriodData));
 
-
-
-    // let formatedValue = value + 60;
-    let formatedValue = 120 - value;
-
-
-    let svgGaugeNumber = Math.round(formatedValue * ((575 - 175) / 120)) + 175;
-
-
-    return svgGaugeNumber;
-
-}
-
-let pressureTo;
-let pressureFrom;
-
-//function changeSVG(color, pressure) {
-function changeSVG(pressure) {
-
-    let svg = document.getElementById("pressure-gauge-test").contentDocument;
-
-
-    let pressureInSvgFormat = formatToSvgValue(parseInt(pressure));
-
-
-    //gauge size
-    if (pressureTo === undefined) {
-        pressureFrom = "M500,750L500,575";
-    } else {
-        pressureFrom = pressureTo;
-    }
-
-    pressureTo = "M500,750L500," + pressureInSvgFormat;
-
-    // log("to", to);
-    // log("from", from)
-
-    svg.getElementById('gauge-animate').setAttribute('from', pressureFrom)
-    svg.getElementById('gauge-animate').setAttribute('to', pressureTo)
-    svg.getElementById('gauge-animate').beginElement();
-
-
-    // //gauge color
-    // colorTo = color;
-
-    // svg.getElementById('gauge-color-animate').setAttribute('from', colorFrom)
-    // svg.getElementById('gauge-color-animate').setAttribute('to', colorTo)
-    // svg.getElementById('gauge-color-animate').beginElement();
-
-    // //bulb color
-    // svg.getElementById('bulb-color-animate').setAttribute('from', colorFrom)
-    // svg.getElementById('bulb-color-animate').setAttribute('to', colorTo)
-    // svg.getElementById('bulb-color-animate').beginElement();
-
-    // colorFrom = colorTo;
 
 
 
 }
+
+
+const showCurrentDataInGraph = async () => {
+
+    //open 
+    GRAPH_IS_IN_CONTINOUS_MODE = true;
+
+
+    let data = {};
+    data.identifier = 'most-recent-data';
+    data.numberOfDataPoints = 15;
+
+    //request current 15 data points from server
+    ws.send(JSON.stringify(data));
+
+
+}
+
 
 
 
@@ -260,7 +371,7 @@ function logout() {
 
 //var ctx = document.getElementById('myChart').getContext('2d');
 var ctx = $('#pressure-chart');
-var pressureChart = new Chart(ctx, {
+var fanChart = new Chart(ctx, {
     type: 'line', //bar, horizontalBar, pie, line, doughnut, rada, polarArea
     data: {
         labels: timeStamps,
@@ -274,7 +385,9 @@ var pressureChart = new Chart(ctx, {
                 'cyan'
             ],
             borderWidth: 1,
-            yAxisID: 'yPressure'
+            yAxisID: 'yPressure',
+            pointRadius: 2,
+            pointHoverRadius: 5
         },
         {
             label: 'FAN-SPEED',
@@ -286,19 +399,20 @@ var pressureChart = new Chart(ctx, {
                 'magenta'
             ],
             borderWidth: 1,
-            yAxisID: 'ySpeed'
+            yAxisID: 'ySpeed',
+            pointRadius: 2,
+            pointHoverRadius: 5
         }],
-        // hoverOffset: 4
     },
     options: {
         responsive: true,
-        // maintainAspectRatio: false,
+        maintainAspectRatio: true,
         scales: {
             yPressure: {
                 beginAtZero: true,
-                maxTicksLimit: 9,
+                maxTicksLimit: 12,
                 stepSize: 10,
-                suggestedMax: 90,
+                suggestedMax: 120,
                 position: 'left',
                 // display: true,
                 ticks: {
