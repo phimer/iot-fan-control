@@ -48,78 +48,98 @@ const userLoginCollection = db.collection('user_login_data');
 const directory = path.join(__dirname, 'static');
 
 
-app.get('/testing', async (req, res) => {
-
-
-    //testing
+//testing
 
 
 
-    //{ time: {"$gte": ISODate('2021-10-14T12:30:40.546') }}
-
-    const dataArray = await collection.aggregate(
-        [
-            {
-                $group:
-                {
-                    _id: {
-                        day: "$day",
-                        hour: "$hour",
-                        minute: "$minute"
-                    }, //make multiple ids
-                    avgSpeed: { $avg: "$speed" },
-                    avgPressure: { $avg: "$pressure" }
-                }
-            }
-        ]
-    ).toArray();
-    //test aggregate
-    //     const dataArray = await collection.aggregate(
-    //         {
-    //             //$match: {
-    //             "time": {
-    //                 $gte: "2021-10-14T14:59:41.546",
-    //                 $lt: "2021-10-14T20:01:36.103"
-    //             }
-    //         }},
-    //     //}
-    //     //}
-    //     {
-    //         $group: {
-    //             "_id": "time",
-    //             speedAVG: { $avg: "speed" }
-    //         }
-    //     }
-    //     // {
-    //     //     "$group": {
-    //     //         "_id": null,
-    //     //         "salesPerHour": { "$avg": "$salesPerHour" }
-    //     //     }
-
-    // ).toArray();
+// let from = '2021-10-14T' + clientData.from + ':00.202'
 
 
-    log("############SPEED AVG############", dataArray)
-
-    // dataArray.forEach(elem => {
-
-    //     let date = new Date(elem.time);
-
-
-
-    // })
-
-
-    // var localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);
-
-
-
-    //testind end
+// app.get('/testing', async (req, res) => {
 
 
 
 
-})
+
+//     //{ time: {"$gte": ISODate('2021-10-14T12:30:40.546') }}
+
+//     const dataArray = await collection.aggregate([
+//         {
+//             $match: {
+//                 "time": {
+//                     $gte: "2021-10-14T14:59:41.546",
+//                     $lt: "2021-10-15T20:01:36.103"
+//                 }
+//             }
+//         },
+//         {
+//             $group: {
+//                 _id: {
+//                     day: "$day",
+//                     hour: "$hour",
+//                     // minute: "$minute"
+//                 },
+//                 avgSpeed: { $avg: "$speed" },
+//                 avgPressure: { $avg: "$pressure" },
+//                 firstDateInGroup: { $min: "$time" },
+//                 lastDateInGroup: { $max: "$time" },
+//                 firstHourDataPointInGroup: { $min: "$hour" },
+//                 lastHourDataPointInGroup: { $max: "$hour" },
+//                 firstMinuteDataPointInGroup: { $min: "$minute" },
+//                 lastMinuteDataPointInGroup: { $max: "$minute" },
+//             }
+//         },
+//         {
+//             $sort: { firstDateInGroup: 1, firstHourDataPointInGroup: 1, firstMinuteDataPointInGroup: 1 }
+//         }
+//     ]).toArray();
+//     //test aggregate
+//     //     const dataArray = await collection.aggregate(
+//     //         {
+//     //             //$match: {
+//     //             "time": {
+//     //                 $gte: "2021-10-14T14:59:41.546",
+//     //                 $lt: "2021-10-14T20:01:36.103"
+//     //             }
+//     //         }},
+//     //     //}
+//     //     //}
+//     //     {
+//     //         $group: {
+//     //             "_id": "time",
+//     //             speedAVG: { $avg: "speed" }
+//     //         }
+//     //     }
+//     //     // {
+//     //     //     "$group": {
+//     //     //         "_id": null,
+//     //     //         "salesPerHour": { "$avg": "$salesPerHour" }
+//     //     //     }
+
+//     // ).toArray();
+
+
+//     log("############AVG############", dataArray)
+
+//     // dataArray.forEach(elem => {
+
+//     //     let date = new Date(elem.time);
+
+
+
+//     // })
+
+
+//     // var localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);
+
+
+
+//     //testind end
+
+
+
+
+// })
 
 
 
@@ -344,6 +364,7 @@ app.get('/fan-control', async (req, res) => {
 
 //websocket ++
 const WebSocket = require("ws");
+const { time } = require('console');
 const wss = new WebSocket.Server({ port: 8080 });
 
 
@@ -401,22 +422,59 @@ wss.on("connection", async ws => {
 
         } else if (clientData.identifier === 'time-period-data') {
 
-            let from = '2021-10-14T' + clientData.from + ':00.202'
+            let dateString = new Date().toISOString().split('T')[0];
+
+            let from = dateString + 'T' + clientData.from + ':00.000'
             log("from: " + from)
 
-
-            let to = '2021-10-14T' + clientData.to + ':00.202'
+            let to = dateString + 'T' + clientData.to + ':00.000'
             log("to: " + to)
 
+            const dataArray = await collection.aggregate([
+                {
+                    $match: {
+                        "time": {
+                            $gte: from,
+                            $lt: to
+                        }
+                    }
+                },
+                {
+                    $group: {
+                        _id: {
+                            day: "$day",
+                            hour: "$hour",
+                            // minute: "$minute"
+                        },
+                        speed: { $avg: "$speed" },
+                        pressure: { $avg: "$pressure" },
+                        firstDateInGroup: { $min: "$time" },
+                        lastDateInGroup: { $max: "$time" },
+                        firstHourDataPointInGroup: { $min: "$hour" },
+                        lastHourDataPointInGroup: { $max: "$hour" },
+                        firstMinuteDataPointInGroup: { $min: "$minute" },
+                        lastMinuteDataPointInGroup: { $max: "$minute" },
+                        time: { $min: "$time" },
+                    }
+                },
+                {
+                    $sort: { firstDateInGroup: 1, firstHourDataPointInGroup: 1, firstMinuteDataPointInGroup: 1 }
+                }
+            ]).toArray();
 
+            log("aggregated fanData From DB: ", dataArray);
+
+
+            //deprecated
             //get data from db for time period
-            const fanDataFromDB = await collection.find({ time: { $gte: from, $lt: to } }).toArray();
+            // const fanDataFromDB = await collection.find({ time: { $gte: from, $lt: to } }).toArray();
 
-            log("fanDataFromDB: ", fanDataFromDB);
+
 
             let fanDataForTimePeriod = {};
-            fanDataForTimePeriod.identifier = 'time-period-data';
-            fanDataForTimePeriod.fanData = fanDataFromDB;
+            fanDataForTimePeriod.identifier = 'aggregate-data';
+            fanDataForTimePeriod.fanData = dataArray;
+
 
 
             log("send")

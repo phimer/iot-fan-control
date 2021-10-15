@@ -43,7 +43,14 @@ ws.addEventListener("message", ({ data }) => {
 
         showFanStats(fanDataPoints[0]);
 
-        changeGraphMulti(fanDataPoints, false, true, false);
+
+
+        changeGraphMulti(fanDataPoints, {
+            resetGraph: false,
+            reverseDataArray: true,
+            smallGraphPoints: false,
+            isAggregateData: false
+        });
 
         // for (let index = 14; index >= 0; index--) {
 
@@ -75,11 +82,24 @@ ws.addEventListener("message", ({ data }) => {
 
         }
 
-    } else if (fanDataObj.identifier === 'time-period-data') {
-        log("time period data")
+    } else if (fanDataObj.identifier === 'aggregate-data') {
+        log("aggregate-data")
 
 
-        changeGraphMulti(fanDataObj.fanData, true, false, true);
+        //todo time period under one hour should display 5 minute aggregates, over 1 hour should hourly aggregates?
+
+
+        let fanDataPoints = fanDataObj.fanData;
+
+        changeGraphMulti(fanDataPoints, {
+            resetGraph: true,
+            reverseDataArray: false,
+            smallGraphPoints: false,
+            isAggregateData: true
+        });
+
+
+
 
         GRAPH_IS_IN_CONTINOUS_MODE = false;
 
@@ -91,7 +111,14 @@ ws.addEventListener("message", ({ data }) => {
 
         showFanStats(fanDataPoints[0]);
 
-        changeGraphMulti(fanDataPoints, true, true, true);
+        changeGraphMulti(fanDataPoints, {
+            resetGraph: true,
+            reverseDataArray: true,
+            smallGraphPoints: false,
+            isAggregateData: false
+        });
+
+
 
 
         fanChart.update();
@@ -103,15 +130,12 @@ ws.addEventListener("message", ({ data }) => {
 })
 
 
+const changeGraphMulti = async (fanDataPoints, options = {}) => {
 
-const changeGraphMulti = async (fanDataPoints, resetGraph, reverseDataArray, smallGraphPoints) => {
-
-
-    if (reverseDataArray) { fanDataPoints = fanDataPoints.reverse(); }
+    if (options.reverseDataArray) { fanDataPoints = fanDataPoints.reverse(); }
     //array has to be reversed
 
-
-    if (resetGraph) {
+    if (options.resetGraph) {
 
         log("reset")
         //clear dataPoints
@@ -123,24 +147,16 @@ const changeGraphMulti = async (fanDataPoints, resetGraph, reverseDataArray, sma
         fanChart.data.datasets[0].data = pressureDataPoints;
         fanChart.data.datasets[1].data = fanSpeedDataPoints;
 
-        // //if time-period data comes in it has to be reversed again, dont know why
-        // fanDataPoints = fanDataPoints.reverse();
-
-
     }
-
-
-    log("timestampts: ", timeStamps)
-
-    log(fanDataPoints)
-
-
-
 
     fanDataPoints.forEach(elem => {
 
-        let dateString = createDateString(elem.time);
-
+        let dateString;
+        if (options.isAggregateData) {
+            dateString = createDateString(elem, { isAggregateData: true });
+        } else {
+            dateString = createDateString(elem, { isAggregateData: false });
+        }
 
         timeStamps.push(dateString);
 
@@ -151,24 +167,13 @@ const changeGraphMulti = async (fanDataPoints, resetGraph, reverseDataArray, sma
 
     })
 
-    if (smallGraphPoints) {
-
+    if (options.smallGraphPoints) {
         changeGraphPointSize(0);
-
     } else {
         changeGraphPointSize(2);
-
     }
 
-
-
-    // log("timeStamps: ", timeStamps)
-    // log("pressureDataPoints: ", pressureDataPoints)
-    // log('fanSpeedDataPoints: ', fanSpeedDataPoints)
-
-    //update graph
     fanChart.update();
-
 }
 
 
@@ -234,8 +239,14 @@ const changeGraphPointSize = (pointRadius, hoverSize) => {
 
 }
 
-const createDateString = (time) => {
-    let date = new Date(time);
+const createDateString = (data, options = {}) => {
+
+    //if data is aggregate data -> datestring is just hour of aggregate data
+    if (options.isAggregateData) {
+        return data.firstHourDataPointInGroup + ':00';
+    }
+
+    let date = new Date(data.time);
 
     let month = (date.getMonth());
     let day = date.getDay();
