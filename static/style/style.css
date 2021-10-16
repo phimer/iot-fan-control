@@ -2,10 +2,58 @@
   font-family: Helvetica, sans-serif;
 }
 
-/* 
-canvas{
 
-  width:400px !important;
-  height:400px !important;
+.slidecontainer {
+  width: 50%; /* Width of the outside container */
+
+}
+/* The slider itself */
+.slider {
+  appearance: none;
+  width: 100%;
+  height: 5px;
+  transition: opacity .2s;
+  outline: none;
+  background: #d4d4d4;
+  border-radius: 40px;
+  /* border: 1px solid #d4d4d4; */
+
+
+}
+/* .slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  background: cyan;
+  cursor: pointer
 
 } */
+
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+}
+
+/*toggle switch for mode */
+
+a {
+  background: #ccc;
+  cursor: pointer;
+  border-top: solid 2px #eaeaea;
+  border-left: solid 2px #eaeaea;
+  border-bottom: solid 2px #777;
+  border-right: solid 2px #777;
+  padding: 5px 5px;
+}
+
+a.down {
+  background: #bbb;
+  border-top: solid 2px #777;
+  border-left: solid 2px #777;
+  border-bottom: solid 2px #eaeaea;
+  border-right: solid 2px #eaeaea;
+}
+
+#button {
+  width: 250px;
+}

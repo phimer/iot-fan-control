@@ -14,7 +14,6 @@
 <body>
 
 
-
     <div id="logout-div">
         <button class="button" onclick=logout()>logout</button>
     </div>
@@ -25,37 +24,59 @@
 
 
     <div class="temp-data">
-        <div id="setpoint">Setpoint: loading</div>
+        <div id="setpoint">Setpoint:</div>
 
-        <div id="mode">Mode: loading</div>
+        <div id="mode">Mode:</div>
         <br>
-        <div id="speed">Fan-Speed: loading </div>
-        <div id="pressure">Pressure: loading</div>
+
+        <div id="speed">Fan-Speed: </div>
+        <div id="pressure">Pressure:</div>
         <br>
 
     </div>
+
+    <a id="button" title="button">AUTO</a>
+
+
+    <br>
+
+    <br>
 
     <br>
     <div id="pressure-input-div">
-        <label>Enter pressure between 0Pa and 120Pa</label><br>
-        <input type="text" size="5" id="pressure-input" placeholder="10" name="pressure-input">
-        <input type="button" id="pressure-submit" value="Set Pressure" onclick="setPressure()">
-
+        <label>Select pressure between 0Pa and 120Pa</label><br>
+        <div class="slidecontainer">
+            <input type="range" min="1" max="120" value="60" class="slider" id="pressure-slider">
+        </div>
+        <br>
+        <span style="display: inline;">
+            <span id="pressure-slider-output"></span>
+            <button id="pressure-submit" onclick="setPressure()">Set Pressure</button>
+        </span>
     </div>
 
-    <br>
-    <div id="fan-speed-input-div">
-        <label>Enter fan-speed between 0 and 100</label><br>
-        <input type="text" size="5" id="fan-speed-input" placeholder="100" name="fan-speed-input">
-        <input type="button" id="fan-speed-submit" value="Set Fan-Speed" onclick="setFanSpeed()">
 
+
+    <div id="fan-speed-input-div" hidden>
+        <label>Select fan-speed between 0% and 100%</label><br>
+        <div class="slidecontainer">
+            <input type="range" min="1" max="100" value="50" class="slider" id="fan-speed-slider">
+        </div>
+        <br>
+        <span style="display: inline;">
+            <span id="fan-speed-slider-output"></span>
+            <button id="fan-speed-submit" onclick="setFanSpeed()">Set Fan-Speed</button>
+        </span>
     </div>
+
+
+
     <br>
     <div id="time-period-input-div">
         <label>Set Time Period</label><br>
 
-        <input type="time" id="time-period-from-input" name="time-period-from-input" value="14:59">
-        <input type="time" id="time-period-to-input" name="time-period-to-input" value="15:40">
+        <input type="time" id="time-period-from-input" name="time-period-from-input" value="16:00">
+        <input type="time" id="time-period-to-input" name="time-period-to-input" value="19:40">
 
         <input type="button" value="Submit" onclick="setTimePeriod()">
 

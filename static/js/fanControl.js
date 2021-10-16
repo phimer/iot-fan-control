@@ -109,7 +109,10 @@ ws.addEventListener("message", ({ data }) => {
 
         log(fanDataPoints);
 
-        showFanStats(fanDataPoints[0]);
+        //not needed, because fan stats gets updated all the time
+        // showFanStats(fanDataPoints[0], {
+        //     setpoint: false
+        // });
 
         changeGraphMulti(fanDataPoints, {
             resetGraph: true,
@@ -179,9 +182,14 @@ const changeGraphMulti = async (fanDataPoints, options = {}) => {
 
 const changeGraphSingle = async (fanData, smallGraphPoints) => {
 
+
     //change time ++
 
-    let dateString = createDateString(fanData.time);
+    let dateString = createDateString(fanData, {
+        isAggregateData: false
+    });
+
+    log("DATESTRITN: ", dateString)
 
     timeStamps.push(dateString);
 
@@ -246,7 +254,11 @@ const createDateString = (data, options = {}) => {
         return data.firstHourDataPointInGroup + ':00';
     }
 
+
+
     let date = new Date(data.time);
+
+
 
     let month = (date.getMonth());
     let day = date.getDay();
@@ -257,6 +269,8 @@ const createDateString = (data, options = {}) => {
 
     let dateString = `${day}.${month} - ${hours}:${minutes}:${seconds}`;
 
+
+
     return dateString;
 }
 
@@ -265,6 +279,7 @@ function showFanStats(fanData) {
 
 
     $(document).ready(() => {
+
 
         $('#setpoint').empty().append("Setpoint: " + fanData.setpoint + "<br>");
         $('#speed').empty().append("Speed: " + fanData.speed + "%<br>");
@@ -278,10 +293,12 @@ function showFanStats(fanData) {
 }
 
 
-function setPressure() {
+const setPressure = async () => {
 
 
-    let pressure = document.getElementById("pressure-input").value;
+    let pressure = document.getElementById("pressure-slider").value;
+
+
 
 
     log("sending pressure to server")
@@ -296,13 +313,18 @@ function setPressure() {
     //change graph to recent data points (if user is looking at time data and sets new pressure graph should update)
     //not sure if graph should update or not??
     showCurrentDataInGraph();
+
+    $('#setpoint').empty().append("Setpoint: " + pressure + "<br>");
 }
 
 
 function setFanSpeed() {
 
 
-    let fanSpeed = document.getElementById("fan-speed-input").value;
+
+    let fanSpeed = document.getElementById("fan-speed-slider").value;
+
+    $('#setpoint').empty().append("Setpoint: " + fanSpeed + "<br>");
 
 
     log("sending speed to server")
@@ -326,14 +348,14 @@ function setFanSpeed() {
 function setTimePeriod() {
 
 
-    let from = document.getElementById("time-period-from-input").value;
-    let to = document.getElementById("time-period-to-input").value;
+    let timeStart = document.getElementById("time-period-from-input").value;
+    let timeEnd = document.getElementById("time-period-to-input").value;
 
-    log("from: " + from)
+    log("timeStart: " + timeStart)
 
     let timePeriodData = {};
-    timePeriodData.from = from;
-    timePeriodData.to = to;
+    timePeriodData.timeStart = timeStart;
+    timePeriodData.timeEnd = timeEnd;
     timePeriodData.identifier = 'time-period-data';
 
     ws.send(JSON.stringify(timePeriodData));
@@ -443,4 +465,55 @@ var fanChart = new Chart(ctx, {
             }
         }
     }
+});
+
+
+
+//sliders ++
+var pressureSlider = document.getElementById("pressure-slider");
+var pressureSliderOutput = document.getElementById("pressure-slider-output");
+pressureSliderOutput.innerHTML = 'Pressure: ' + pressureSlider.value + 'Pa';
+
+var fanSpeedSlider = document.getElementById("fan-speed-slider");
+var fanSpeedSliderOutput = document.getElementById("fan-speed-slider-output");
+fanSpeedSliderOutput.innerHTML = 'Fan-Speed: ' + fanSpeedSlider.value + '%';
+
+// Update the current slider value (each time you drag the slider handle)
+pressureSlider.oninput = () => {
+
+    let val = jQuery('#pressure-slider').val();
+
+
+    pressureSliderOutput.innerHTML = 'Pressure: ' + val + 'Pa';
+}
+
+fanSpeedSlider.oninput = () => {
+
+    let val = jQuery('#fan-speed-slider').val();
+
+
+    fanSpeedSliderOutput.innerHTML = 'Fan-Speed: ' + val + '%';
+}
+
+//sliders --
+
+
+
+$(document).ready(function () {
+    $('a#button').click(function () {
+        $(this).toggleClass("down");
+
+        let modeButton = document.getElementById('button')
+
+        if (modeButton.className === 'down') {
+            modeButton.innerHTML = 'MANUAL';
+            $('#pressure-input-div').hide();
+            $('#fan-speed-input-div').show();
+        } else {
+            modeButton.innerHTML = 'AUTO';
+            $('#fan-speed-input-div').hide();
+            $('#pressure-input-div').show();
+        }
+
+    });
 });

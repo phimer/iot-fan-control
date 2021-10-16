@@ -173,8 +173,8 @@ mqttClient.on('message', async (topic, message) => {
 
     mqttData.time = localISOTime;
     mqttData.day = dateSplits[0];
-    mqttData.hour = dateSplits[1].split(':')[0];
-    mqttData.minute = dateSplits[1].split(':')[1];
+    mqttData.hour = parseInt(dateSplits[1].split(':')[0]);
+    mqttData.minute = parseInt(dateSplits[1].split(':')[1]);
     log(mqttData)
 
     const result = await collection.insertOne(mqttData);
@@ -420,14 +420,15 @@ wss.on("connection", async ws => {
 
             mqttClient.publish('controller/settings', JSON.stringify(dataForFan));
 
+
         } else if (clientData.identifier === 'time-period-data') {
 
             let dateString = new Date().toISOString().split('T')[0];
 
-            let from = dateString + 'T' + clientData.from + ':00.000'
+            let from = dateString + 'T' + clientData.timeStart + ':00.000'
             log("from: " + from)
 
-            let to = dateString + 'T' + clientData.to + ':00.000'
+            let to = dateString + 'T' + clientData.timeEnd + ':00.000'
             log("to: " + to)
 
             const dataArray = await collection.aggregate([
