@@ -5,6 +5,8 @@
 
 .slidecontainer {
   width: 50%; /* Width of the outside container */
+  margin-left: 25%;
+  
 
 }
 /* The slider itself */
@@ -17,6 +19,7 @@
   background: #d4d4d4;
   border-radius: 40px;
   /* border: 1px solid #d4d4d4; */
+
 
 
 }
@@ -34,26 +37,32 @@
   opacity: 1; /* Fully shown on mouse-over */
 }
 
-/*toggle switch for mode */
+/* canvas{
 
-a {
-  background: #ccc;
-  cursor: pointer;
-  border-top: solid 2px #eaeaea;
-  border-left: solid 2px #eaeaea;
-  border-bottom: solid 2px #777;
-  border-right: solid 2px #777;
-  padding: 5px 5px;
+  width:50% !important;
+  height:500px !important;
+
+} */
+
+
+#chart-div {
+
+  width:70%;
+  height: 500px;
+  border: 1px solid cyan;
+  justify-content: center;
+
+  margin: 20px 0 0 15%;
+
 }
 
-a.down {
-  background: #bbb;
-  border-top: solid 2px #777;
-  border-left: solid 2px #777;
-  border-bottom: solid 2px #eaeaea;
-  border-right: solid 2px #eaeaea;
+#main-view {
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+
 }
 
-#button {
-  width: 250px;
+.auto-manual-button {
+  width: 100px;
 }

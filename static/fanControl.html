@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="/style/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js"></script>
 
+
+
 </head>
 
 <body>
@@ -18,77 +20,88 @@
         <button class="button" onclick=logout()>logout</button>
     </div>
 
-    <div id="logout-div">
+    <div id="user-stats-div">
         <button class="button" onclick=getUserStats()>show user stats</button>
     </div>
 
+    <div id="main-view">
 
-    <div class="temp-data">
-        <div id="setpoint">Setpoint:</div>
+        <div class="temp-data">
+            <div id="setpoint">Setpoint:</div>
 
-        <div id="mode">Mode:</div>
-        <br>
+            <div id="mode">Mode:</div>
+            <br>
 
-        <div id="speed">Fan-Speed: </div>
-        <div id="pressure">Pressure:</div>
-        <br>
+            <div id="speed">Fan-Speed: </div>
+            <div id="pressure">Pressure:</div>
+            <br>
 
-    </div>
-
-    <a id="button" title="button">AUTO</a>
-
-
-    <br>
-
-    <br>
-
-    <br>
-    <div id="pressure-input-div">
-        <label>Select pressure between 0Pa and 120Pa</label><br>
-        <div class="slidecontainer">
-            <input type="range" min="1" max="120" value="60" class="slider" id="pressure-slider">
         </div>
+
+        <button id="auto-button" class="auto-manual-button" title="button" onclick="selectAutoMode()">AUTO </button>
+        <button id="manual-button" class="auto-manual-button" title="button"
+            onclick="selectManualMode()">MANUAL</button>
+
+
+
+
+
         <br>
-        <span style="display: inline;">
-            <span id="pressure-slider-output"></span>
-            <button id="pressure-submit" onclick="setPressure()">Set Pressure</button>
-        </span>
-    </div>
 
+        <br>
 
-
-    <div id="fan-speed-input-div" hidden>
-        <label>Select fan-speed between 0% and 100%</label><br>
-        <div class="slidecontainer">
-            <input type="range" min="1" max="100" value="50" class="slider" id="fan-speed-slider">
+        <br>
+        <div id="pressure-input-div">
+            <label>Select pressure between 0Pa and 120Pa</label><br>
+            <div class="slidecontainer">
+                <input type="range" min="1" max="120" value="60" class="slider" id="pressure-slider">
+            </div>
+            <br>
+            <span style="display: inline;">
+                <span id="pressure-slider-output"></span>
+                <button id="pressure-submit" onclick="setPressure()">Set Pressure</button>
+            </span>
         </div>
+
+
+
+        <div id="fan-speed-input-div" hidden>
+            <label>Select fan-speed between 0% and 100%</label><br>
+            <div class="slidecontainer">
+                <input type="range" min="1" max="100" value="50" class="slider" id="fan-speed-slider">
+            </div>
+            <br>
+            <span style="display: inline;">
+                <span id="fan-speed-slider-output"></span>
+                <button id="fan-speed-submit" onclick="setFanSpeed()">Set Fan-Speed</button>
+            </span>
+        </div>
+
+
+
         <br>
-        <span style="display: inline;">
-            <span id="fan-speed-slider-output"></span>
-            <button id="fan-speed-submit" onclick="setFanSpeed()">Set Fan-Speed</button>
-        </span>
+        <div id="time-period-input-div">
+            <label>Set Time Period</label><br>
+
+            <input type="time" id="time-period-from-input" name="time-period-from-input" value="16:00">
+            <input type="time" id="time-period-to-input" name="time-period-to-input" value="19:40">
+
+            <input type="button" value="Submit" onclick="setTimePeriod()">
+
+        </div>
+
+        <div id="reset-graph-div">
+            <button id="reset-graph-button" class="button" onclick=showCurrentDataInGraph()>Show current Graph</button>
+        </div>
+
+
+        <div id="chart-div">
+
+            <canvas id="pressure-chart"></canvas>
+
+        </div>
+
     </div>
-
-
-
-    <br>
-    <div id="time-period-input-div">
-        <label>Set Time Period</label><br>
-
-        <input type="time" id="time-period-from-input" name="time-period-from-input" value="16:00">
-        <input type="time" id="time-period-to-input" name="time-period-to-input" value="19:40">
-
-        <input type="button" value="Submit" onclick="setTimePeriod()">
-
-    </div>
-
-    <div id="reset-graph-div">
-        <button id="reset-graph-button" class="button" onclick=showCurrentDataInGraph()>Show current Graph</button>
-    </div>
-
-
-    <canvas id="pressure-chart" width="400" height="300"></canvas>
-
     <script src="/js/fanControl.js"></script>
 
 </body>

@@ -9,7 +9,7 @@ let GRAPH_IS_IN_CONTINOUS_MODE = true;
 
 //connection to server websocket
 const ws = new WebSocket("ws://Localhost:8080");
-log("ws: ", ws);
+// log("ws: ", ws);
 
 
 
@@ -439,7 +439,7 @@ var fanChart = new Chart(ctx, {
     },
     options: {
         responsive: true,
-        maintainAspectRatio: true,
+        maintainAspectRatio: false,
         scales: {
             yPressure: {
                 beginAtZero: true,
@@ -472,11 +472,11 @@ var fanChart = new Chart(ctx, {
 //sliders ++
 var pressureSlider = document.getElementById("pressure-slider");
 var pressureSliderOutput = document.getElementById("pressure-slider-output");
-pressureSliderOutput.innerHTML = 'Pressure: ' + pressureSlider.value + 'Pa';
+pressureSliderOutput.innerHTML = 'Selected Pressure: ' + pressureSlider.value + 'Pa';
 
 var fanSpeedSlider = document.getElementById("fan-speed-slider");
 var fanSpeedSliderOutput = document.getElementById("fan-speed-slider-output");
-fanSpeedSliderOutput.innerHTML = 'Fan-Speed: ' + fanSpeedSlider.value + '%';
+fanSpeedSliderOutput.innerHTML = 'Selected Fan-Speed: ' + fanSpeedSlider.value + '%';
 
 // Update the current slider value (each time you drag the slider handle)
 pressureSlider.oninput = () => {
@@ -497,23 +497,54 @@ fanSpeedSlider.oninput = () => {
 
 //sliders --
 
+const selectManualMode = async () => {
+
+    $('#pressure-input-div').hide();
+    $('#fan-speed-input-div').show();
+    $('#manual-button').css('background-color', 'cyan');
+    $('#auto-button').css('background-color', 'grey');
 
 
-$(document).ready(function () {
-    $('a#button').click(function () {
-        $(this).toggleClass("down");
+}
 
-        let modeButton = document.getElementById('button')
 
-        if (modeButton.className === 'down') {
-            modeButton.innerHTML = 'MANUAL';
-            $('#pressure-input-div').hide();
-            $('#fan-speed-input-div').show();
-        } else {
-            modeButton.innerHTML = 'AUTO';
-            $('#fan-speed-input-div').hide();
-            $('#pressure-input-div').show();
-        }
 
-    });
-});
+const selectAutoMode = async () => {
+
+    $('#fan-speed-input-div').hide();
+    $('#pressure-input-div').show();
+    $('#auto-button').css('background-color', 'cyan');
+    $('#manual-button').css('background-color', 'grey');
+
+}
+
+
+
+
+// $(document).ready(function () {
+//     $('a#button').click(function () {
+//         $(this).toggleClass("down");
+
+//         let modeButton = document.getElementById('button')
+
+//         if (modeButton.className === 'down') {
+//             modeButton.innerHTML = 'AUTO';
+//             $('#pressure-input-div').hide();
+//             $('#fan-speed-input-div').show();
+//         } else {
+//             modeButton.innerHTML = 'MANUAL';
+//             $('#fan-speed-input-div').hide();
+//             $('#pressure-input-div').show();
+//         }
+
+//     });
+// });
+
+
+const setButtonToAutoMode = () => {
+
+    $('#auto-button').css('background-color', 'cyan');
+    $('#manual-button').css('background-color', 'grey');
+}
+
+setButtonToAutoMode();
