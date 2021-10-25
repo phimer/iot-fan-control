@@ -357,8 +357,18 @@ app.get('/fan-control', async (req, res) => {
 
 //routings after authentication --
 
+//user stats ++
+app.get('/user-stats', async (req, res) => {
 
+    const userData = await userDataCollection.find({}).toArray();
+    log(userData);
 
+    //put userData into userStats ejs (in table maybe)
+
+    res.status(200).render('userStats');
+
+})
+//user stats --
 
 
 
@@ -516,6 +526,19 @@ wss.on("connection", async ws => {
 
 
         }
+        // else if (clientData.identifier === 'user-stats') {
+
+
+        //     const userData = await userDataCollection.find({}).toArray();
+
+
+
+        //     // log(userData);
+
+        //     ws.send(JSON.stringify(userData));
+
+
+        // }
     })
 
 

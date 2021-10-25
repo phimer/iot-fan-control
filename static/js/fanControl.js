@@ -5,6 +5,7 @@ const DATAPOINTS = 15;
 
 let GRAPH_IS_IN_CONTINOUS_MODE = true;
 
+let pressureFailCount = 0;
 
 
 //connection to server websocket
@@ -45,6 +46,7 @@ ws.addEventListener("message", ({ data }) => {
 
 
 
+
         changeGraphMulti(fanDataPoints, {
             resetGraph: false,
             reverseDataArray: true,
@@ -69,6 +71,25 @@ ws.addEventListener("message", ({ data }) => {
         log(fanDataPoint);
 
         showFanStats(fanDataPoint)
+
+        let pressure = fanDataPoint.pressure;
+        let setpoint = fanDataPoint.setpoint;
+
+
+        //catch if pressure doesn't settle //32
+        if (pressure !== setpoint && ((pressure - setpoint < 5 && pressure - setpoint > 0) || (setpoint - pressure < 5 && setpoint - pressure > 0))) {
+
+            pressureFailCount++;
+            log("pressure != setpoint, failCount=" + pressureFailCount);
+
+            if (pressureFailCount > 10) {
+                $('#pressure-warning').empty().append(`Pressure is not settling at ${setpoint}Pa`);
+            } else {
+                $('#pressure-warning').empty();
+
+            }
+        }
+
 
         //if user is looking at aggregated data -> disable adding of new data points
         if (GRAPH_IS_IN_CONTINOUS_MODE) {
@@ -275,6 +296,17 @@ const createDateString = (data, options = {}) => {
 }
 
 
+// const setSliderValue = async (fanData) => {
+
+//     log(fanData.pressure)
+
+//     // $('#pressure-slider').value(parseInt(fanData.pressure));
+//     let slider = document.getElementById('pressure-slider');
+//     slider.value = fanData.pressure.toString();
+
+// }
+
+
 function showFanStats(fanData) {
 
 
@@ -309,6 +341,7 @@ const setPressure = async () => {
     pressureData.identifier = 'fan-data';
 
     ws.send(JSON.stringify(pressureData));
+    removePressureWarning();
 
     //change graph to recent data points (if user is looking at time data and sets new pressure graph should update)
     //not sure if graph should update or not??
@@ -335,6 +368,7 @@ function setFanSpeed() {
     fanSpeedData.identifier = 'fan-data';
 
     ws.send(JSON.stringify(fanSpeedData));
+    removePressureWarning();
 
     //change graph to recent data points (if user is looking at time data and sets new pressure graph should update)
     //not sure if graph should update or not??
@@ -548,3 +582,14 @@ const setButtonToAutoMode = () => {
 }
 
 setButtonToAutoMode();
+
+
+const removePressureWarning = async () => {
+    pressureFailCount = 0;
+    $('#pressure-warning').empty();
+}
+
+
+// const getUserStats = async () => {
+//     window.location.href = "http://localhost"
+// }

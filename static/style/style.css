@@ -66,3 +66,7 @@
 .auto-manual-button {
   width: 100px;
 }
+
+#pressure-warning {
+  color: red;
+}

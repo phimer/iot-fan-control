@@ -11,6 +11,7 @@
 
 
 
+
 </head>
 
 <body>
@@ -21,22 +22,16 @@
     </div>
 
     <div id="user-stats-div">
-        <button class="button" onclick=getUserStats()>show user stats</button>
+
+
+        <input type="button" onclick="location.href='/user-stats';" value="user stats" />
     </div>
+
+
 
     <div id="main-view">
 
-        <div class="temp-data">
-            <div id="setpoint">Setpoint:</div>
 
-            <div id="mode">Mode:</div>
-            <br>
-
-            <div id="speed">Fan-Speed: </div>
-            <div id="pressure">Pressure:</div>
-            <br>
-
-        </div>
 
         <button id="auto-button" class="auto-manual-button" title="button" onclick="selectAutoMode()">AUTO </button>
         <button id="manual-button" class="auto-manual-button" title="button"
@@ -48,13 +43,13 @@
 
         <br>
 
-        <br>
+
 
         <br>
         <div id="pressure-input-div">
             <label>Select pressure between 0Pa and 120Pa</label><br>
             <div class="slidecontainer">
-                <input type="range" min="1" max="120" value="60" class="slider" id="pressure-slider">
+                <input type="range" min="0" max="120" value="60" class="slider" id="pressure-slider">
             </div>
             <br>
             <span style="display: inline;">
@@ -68,7 +63,7 @@
         <div id="fan-speed-input-div" hidden>
             <label>Select fan-speed between 0% and 100%</label><br>
             <div class="slidecontainer">
-                <input type="range" min="1" max="100" value="50" class="slider" id="fan-speed-slider">
+                <input type="range" min="0" max="100" value="50" class="slider" id="fan-speed-slider">
             </div>
             <br>
             <span style="display: inline;">
@@ -77,9 +72,31 @@
             </span>
         </div>
 
-
-
         <br>
+
+        <div id="fan-raw-data" style="background-color: red;">
+            <div id="setpoint">Setpoint:</div>
+
+            <div id="mode">Mode:</div>
+            <br>
+
+            <div id="speed">Fan-Speed: </div>
+            <div id="pressure">Pressure:</div>
+
+
+        </div>
+
+
+        <div id="chart-div">
+
+            <canvas id="pressure-chart"></canvas>
+
+        </div>
+
+
+        <h4 id="pressure-warning"></h4>
+
+
         <div id="time-period-input-div">
             <label>Set Time Period</label><br>
 
@@ -95,13 +112,13 @@
         </div>
 
 
-        <div id="chart-div">
-
-            <canvas id="pressure-chart"></canvas>
-
-        </div>
 
     </div>
+
+
+
+
+
     <script src="/js/fanControl.js"></script>
 
 </body>
