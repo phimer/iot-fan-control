@@ -10,10 +10,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js"></script>
 
 
+
+
 </head>
 
 <body>
-
 
 
     <div id="logout-div">
@@ -21,38 +22,45 @@
     </div>
 
 
-    <div class="temp-data">
-        <div id="setpoint">Setpoint: loading</div>
-        <div id="mode">Mode: loading</div>
-        <br>
-        <div id="speed">Fan-Speed: loading </div>
-        <div id="pressure">Pressure: loading</div>
-        <br>
+
+
+
+    <div id="main-view">
+
+
+        <div id="fan-raw-data" style="background-color: red;">
+            <div id="setpoint">Setpoint:</div>
+
+            <div id="mode">Mode:</div>
+            <br>
+
+            <div id="speed">Fan-Speed: </div>
+            <div id="pressure">Pressure:</div>
+
+
+        </div>
+
+
+        <div id="chart-div">
+
+            <canvas id="pressure-chart"></canvas>
+
+        </div>
+
+
+        <h4 id="pressure-warning"></h4>
+
+
+
+
 
     </div>
 
-    <!-- <br>
-    <div id="pressure-input-div">
-        <label>Enter pressure between 0Pa and 120Pa</label><br>
-        <input type="text" size="5" id="pressure-input" placeholder="10" name="pressure-input">
-        <input type="button" id="pressure-submit" value="Set Pressure" onclick="setPressure()">
-
-    </div>
-
-    <br>
-    <div id="fan-speed-input-div">
-        <label>Enter fan-speed between 0 and 100</label><br>
-        <input type="text" size="5" id="fan-speed-input" placeholder="100" name="fan-speed-input">
-        <input type="button" id="fan-speed-submit" value="Set Fan-Speed" onclick="setFanSpeed()">
-
-    </div> -->
-    <canvas id="pressure-chart" width="400" height="400"></canvas>
-
-    <!-- <object id="pressure-gauge-test" data="svg/pressure.svg" type="image/svg+xml"></object> -->
 
 
 
-    <script src="js/fanControl.js"></script>
+
+    <script src="/js/fanControl.js"></script>
 
 </body>
 

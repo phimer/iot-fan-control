@@ -82,7 +82,7 @@ ws.addEventListener("message", ({ data }) => {
             pressureFailCount++;
             log("pressure != setpoint, failCount=" + pressureFailCount);
 
-            if (pressureFailCount > 10) {
+            if (pressureFailCount > 6) {
                 $('#pressure-warning').empty().append(`Pressure is not settling at ${setpoint}Pa`);
             } else {
                 $('#pressure-warning').empty();
