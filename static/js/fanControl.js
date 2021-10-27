@@ -5,7 +5,6 @@ const DATAPOINTS = 15;
 
 let GRAPH_IS_IN_CONTINOUS_MODE = true;
 
-let pressureFailCount = 0;
 
 
 //connection to server websocket
@@ -30,7 +29,7 @@ let fanSpeedDataPoints = [];
 
 ws.addEventListener("message", ({ data }) => {
 
-    log("PORT BOOLEAN = " + GRAPH_IS_IN_CONTINOUS_MODE);
+    // log("PORT BOOLEAN = " + GRAPH_IS_IN_CONTINOUS_MODE);
 
     let fanDataObj = JSON.parse(data);
 
@@ -54,11 +53,6 @@ ws.addEventListener("message", ({ data }) => {
             isAggregateData: false
         });
 
-        // for (let index = 14; index >= 0; index--) {
-
-        //     changeGraphSingle(fanDataPoints[index]);
-
-        // }
 
         fanChart.update();
 
@@ -77,26 +71,31 @@ ws.addEventListener("message", ({ data }) => {
 
 
         //catch if pressure doesn't settle //32
-        if (pressure !== setpoint && ((pressure - setpoint < 5 && pressure - setpoint > 0) || (setpoint - pressure < 5 && setpoint - pressure > 0))) {
-
-            pressureFailCount++;
-            log("pressure != setpoint, failCount=" + pressureFailCount);
-
-            if (pressureFailCount > 6) {
-                $('#pressure-warning').empty().append(`Pressure is not settling at ${setpoint}Pa`);
-            } else {
-                $('#pressure-warning').empty();
-
-            }
+        if (fanDataPoint.error === true) {
+            $('#pressure-warning').empty().show().append(`Pressure is not settling at ${setpoint}Pa`);
+        } else {
+            $('#pressure-warning').hide();
         }
 
+        //old +
+        // if (pressure !== setpoint && ((pressure - setpoint < 5 && pressure - setpoint > 0) || (setpoint - pressure < 5 && setpoint - pressure > 0))) {
+
+        //     pressureFailCount++;
+        //     log("pressure != setpoint, failCount=" + pressureFailCount);
+
+        //     if (pressureFailCount > 6) {
+        //         $('#pressure-warning').empty().append(`Pressure is not settling at ${setpoint}Pa`);
+        //     } else {
+        //         $('#pressure-warning').empty();
+
+        //     }
+        // }
+        //old -
 
         //if user is looking at aggregated data -> disable adding of new data points
         if (GRAPH_IS_IN_CONTINOUS_MODE) {
 
-            log('GRAPH_IS_IN_CONTINOUS_MODE = true')
-
-
+            // log('GRAPH_IS_IN_CONTINOUS_MODE = true')
 
             //add point to graph
             changeGraphSingle(fanDataPoint, false);
@@ -210,7 +209,7 @@ const changeGraphSingle = async (fanData, smallGraphPoints) => {
         isAggregateData: false
     });
 
-    log("DATESTRITN: ", dateString)
+    // log("DATESTRINGG: ", dateString)
 
     timeStamps.push(dateString);
 
@@ -288,7 +287,7 @@ const createDateString = (data, options = {}) => {
     let minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
     let seconds = (date.getSeconds() < 10 ? '0' : '') + date.getSeconds();
 
-    let dateString = `${day}.${month} - ${hours}:${minutes}:${seconds}`;
+    let dateString = `${hours}:${minutes}:${seconds}`; //${day}.${month} - removed day and month
 
 
 
@@ -570,8 +569,8 @@ setButtonToAutoMode();
 
 
 const removePressureWarning = async () => {
-    pressureFailCount = 0;
-    $('#pressure-warning').empty();
+
+    $('#pressure-warning').hide();
 }
 
 
