@@ -1,11 +1,12 @@
 * {
   font-family: Helvetica, sans-serif;
+  
 }
 
 
 .slidecontainer {
-  width: 50%; /* Width of the outside container */
-  margin-left: 25%;
+  width: 80%; /* Width of the outside container */
+  margin-left: 10%;
   
 
 }
@@ -69,4 +70,64 @@
 
 #pressure-warning {
   color: red;
+}
+
+
+#fan-raw-data {
+  width: 70%;
+  overflow: hidden; 
+  margin: 10px 0 0 15%;
+}
+#pressure-div {
+  width: 50%;
+  float:left; 
+  border: 1px solid cyan;
+  height: 80px;
+}
+#speed-div {
+  border: 1px solid cyan;
+  overflow: hidden; 
+  height: 80px;
+}
+#setpoint-div {
+  width: 50%;
+  float:left; 
+  border: 1px solid cyan;
+  height: 80px;
+}
+#mode-div {
+  border: 1px solid cyan;
+  overflow: hidden; 
+  height: 80px;
+}
+
+.fan-raw-data-headings {
+  top: 5px;
+  position:relative;
+}
+.fan-raw-data-values {
+  top: 10px;
+  font-size: 40px;
+  position: relative;
+
+}
+
+#fan-control {
+  border: 1px solid cyan;
+  width: 70%;
+  margin-left: 15%;
+  padding: 10px 0 10px 0;
+
+}
+
+
+
+
+.button-activated {
+  background-color: cyan;
+}
+
+
+.button-deactivated {
+  background-color: #f2f2f2;
 }

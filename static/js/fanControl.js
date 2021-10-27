@@ -313,12 +313,12 @@ function showFanStats(fanData) {
     $(document).ready(() => {
 
 
-        $('#setpoint').empty().append("Setpoint: " + fanData.setpoint + "<br>");
-        $('#speed').empty().append("Speed: " + fanData.speed + "%<br>");
-        $('#pressure').empty().append("Pressure: " + fanData.pressure + "<br>");
+        $('#setpoint').empty().append(fanData.setpoint);
+        $('#speed').empty().append(fanData.speed);
+        $('#pressure').empty().append(fanData.pressure);
 
-        let fanMode = (fanData.auto === true) ? 'auto' : 'manual';
-        $('#mode').empty().append("Mode: " + fanMode + "<br>");
+        let fanMode = (fanData.auto === true) ? 'AUTO' : 'MANUAL';
+        $('#mode').empty().append(fanMode);
 
     })
 
@@ -347,7 +347,7 @@ const setPressure = async () => {
     //not sure if graph should update or not??
     showCurrentDataInGraph();
 
-    $('#setpoint').empty().append("Setpoint: " + pressure + "<br>");
+    $('#setpoint').empty().append(pressure);
 }
 
 
@@ -357,7 +357,7 @@ function setFanSpeed() {
 
     let fanSpeed = document.getElementById("fan-speed-slider").value;
 
-    $('#setpoint').empty().append("Setpoint: " + fanSpeed + "<br>");
+    $('#setpoint').empty().append(fanSpeed);
 
 
     log("sending speed to server")
@@ -535,8 +535,8 @@ const selectManualMode = async () => {
 
     $('#pressure-input-div').hide();
     $('#fan-speed-input-div').show();
-    $('#manual-button').css('background-color', 'cyan');
-    $('#auto-button').css('background-color', 'grey');
+    $('#manual-button').toggleClass('button-activated');
+    $('#auto-button').toggleClass('button-deactivated');
 
 
 }
@@ -547,38 +547,20 @@ const selectAutoMode = async () => {
 
     $('#fan-speed-input-div').hide();
     $('#pressure-input-div').show();
-    $('#auto-button').css('background-color', 'cyan');
-    $('#manual-button').css('background-color', 'grey');
+    $('#auto-button').toggleClass('button-activated');
+    $('#manual-button').toggleClass('button-deactivated');
 
 }
 
 
 
-
-// $(document).ready(function () {
-//     $('a#button').click(function () {
-//         $(this).toggleClass("down");
-
-//         let modeButton = document.getElementById('button')
-
-//         if (modeButton.className === 'down') {
-//             modeButton.innerHTML = 'AUTO';
-//             $('#pressure-input-div').hide();
-//             $('#fan-speed-input-div').show();
-//         } else {
-//             modeButton.innerHTML = 'MANUAL';
-//             $('#fan-speed-input-div').hide();
-//             $('#pressure-input-div').show();
-//         }
-
-//     });
-// });
-
-
 const setButtonToAutoMode = () => {
 
-    $('#auto-button').css('background-color', 'cyan');
-    $('#manual-button').css('background-color', 'grey');
+    $('#auto-button').setClass('button-activated');
+    $('#manual-button').setClass('button-deactivated');
+
+    // $('#auto-button').toggleClass('button-activated');
+    // $('#manual-button').toggleClass('button-deactivated');
 }
 
 setButtonToAutoMode();
