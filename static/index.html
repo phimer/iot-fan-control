@@ -17,26 +17,42 @@
 <body>
 
 
-    <div id="logout-div">
+    <div id="login-div">
         <button class="button" onclick=login()>login</button>
     </div>
-
-
 
 
 
     <div id="main-view">
 
 
-        <div id="fan-raw-data" style="background-color: red;">
-            <div id="setpoint">Setpoint:</div>
 
-            <div id="mode">Mode:</div>
-            <br>
 
-            <div id="speed">Fan-Speed: </div>
-            <div id="pressure">Pressure:</div>
+        <div id="fan-raw-data">
 
+            <div id="pressure-div">
+                <span class="fan-raw-data-headings">Pressure </span>
+                <br>
+                <span class="fan-raw-data-values" id="pressure"></span>
+            </div>
+
+            <div id="speed-div">
+                <span class="fan-raw-data-headings">Fan-Speed </span>
+                <br>
+                <span class="fan-raw-data-values" id="speed"></span>
+            </div>
+
+            <div id="setpoint-div">
+                <span class="fan-raw-data-headings">Setpoint</span>
+                <br>
+                <span class="fan-raw-data-values" id="setpoint"></span>
+            </div>
+
+            <div id="mode-div">
+                <span class="fan-raw-data-headings">Mode </span>
+                <br>
+                <span class="fan-raw-data-values" id="mode"></span>
+            </div>
 
         </div>
 
@@ -48,7 +64,9 @@
         </div>
 
 
-        <h4 id="pressure-warning"></h4>
+        <h2 id="pressure-warning" hidden></h2>
+
+
 
 
 
