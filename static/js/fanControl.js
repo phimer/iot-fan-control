@@ -535,9 +535,9 @@ const selectManualMode = async () => {
 
     $('#pressure-input-div').hide();
     $('#fan-speed-input-div').show();
-    $('#manual-button').toggleClass('button-activated');
-    $('#auto-button').toggleClass('button-deactivated');
 
+    $('#manual-button').toggleClass('button-activated');
+    $('#auto-button').toggleClass('button-activated');
 
 }
 
@@ -547,8 +547,9 @@ const selectAutoMode = async () => {
 
     $('#fan-speed-input-div').hide();
     $('#pressure-input-div').show();
+
+    $('#manual-button').toggleClass('button-activated');
     $('#auto-button').toggleClass('button-activated');
-    $('#manual-button').toggleClass('button-deactivated');
 
 }
 
@@ -556,8 +557,10 @@ const selectAutoMode = async () => {
 
 const setButtonToAutoMode = () => {
 
-    $('#auto-button').setClass('button-activated');
-    $('#manual-button').setClass('button-deactivated');
+    console.log("hello")
+
+    $('#auto-button').addClass('button-activated');
+    $('#manual-button').addClass('button-deactivated');
 
     // $('#auto-button').toggleClass('button-activated');
     // $('#manual-button').toggleClass('button-deactivated');

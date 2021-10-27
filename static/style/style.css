@@ -124,7 +124,7 @@
 
 
 .button-activated {
-  background-color: cyan;
+  background-color: cyan !important;
 }
 
 
