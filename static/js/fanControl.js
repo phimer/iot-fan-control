@@ -3,8 +3,10 @@ let log = console.log;
 const DATAPOINTS = 15;
 
 
-let GRAPH_IS_IN_CONTINOUS_MODE = true;
+var GRAPH_IS_IN_CONTINOUS_MODE = true;
 
+var waitForPressureToSettle = false;
+const WAIT_FOR_PRESSURE_TO_SETTLE_TIMEOUT = 30000;
 
 
 //connection to server websocket
@@ -71,7 +73,7 @@ ws.addEventListener("message", ({ data }) => {
 
 
         //catch if pressure doesn't settle //32
-        if (fanDataPoint.error === true) {
+        if (fanDataPoint.error === true && waitForPressureToSettle === false) {
             $('#pressure-warning').empty().show().append(`Pressure is not settling at ${setpoint}Pa`);
         } else {
             $('#pressure-warning').hide();
@@ -505,11 +507,11 @@ var fanChart = new Chart(ctx, {
 //sliders ++
 var pressureSlider = document.getElementById("pressure-slider");
 var pressureSliderOutput = document.getElementById("pressure-slider-output");
-pressureSliderOutput.innerHTML = 'Selected Pressure: ' + pressureSlider.value + 'Pa';
+pressureSliderOutput.innerHTML = pressureSlider.value + 'Pa';
 
 var fanSpeedSlider = document.getElementById("fan-speed-slider");
 var fanSpeedSliderOutput = document.getElementById("fan-speed-slider-output");
-fanSpeedSliderOutput.innerHTML = 'Selected Fan-Speed: ' + fanSpeedSlider.value + '%';
+fanSpeedSliderOutput.innerHTML = fanSpeedSlider.value + '%';
 
 // Update the current slider value (each time you drag the slider handle)
 pressureSlider.oninput = () => {
@@ -517,7 +519,7 @@ pressureSlider.oninput = () => {
     let val = jQuery('#pressure-slider').val();
 
 
-    pressureSliderOutput.innerHTML = 'Pressure: ' + val + 'Pa';
+    pressureSliderOutput.innerHTML = val + 'Pa';
 }
 
 fanSpeedSlider.oninput = () => {
@@ -525,7 +527,7 @@ fanSpeedSlider.oninput = () => {
     let val = jQuery('#fan-speed-slider').val();
 
 
-    fanSpeedSliderOutput.innerHTML = 'Fan-Speed: ' + val + '%';
+    fanSpeedSliderOutput.innerHTML = val + '%';
 }
 
 //sliders --
@@ -571,6 +573,12 @@ setButtonToAutoMode();
 const removePressureWarning = async () => {
 
     $('#pressure-warning').hide();
+
+    //set 15 second timer to let pressure adjust - error from fan simulator is still true even when the pressure gets changed
+    waitForPressureToSettle = true;
+
+    setTimeout(() => { waitForPressureToSettle = false; }, WAIT_FOR_PRESSURE_TO_SETTLE_TIMEOUT);
+
 }
 
 

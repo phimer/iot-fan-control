@@ -139,3 +139,13 @@
 .button-deactivated {
   background-color: #f2f2f2;
 }
+
+
+.slider-submit-button {
+  margin-top: 10px;
+}
+
+.slider-output {
+  position: relative;
+  top: 5px;
+}

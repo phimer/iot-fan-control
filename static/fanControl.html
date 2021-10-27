@@ -44,8 +44,9 @@
                 </div>
 
                 <span style="display: inline;">
-                    <span id="pressure-slider-output"></span>
-                    <button id="pressure-submit" onclick="setPressure()">Set Pressure</button>
+                    <span id="pressure-slider-output" class="slider-output"></span>
+                    <br>
+                    <button id="pressure-submit" style="margin-top: 10px;" onclick="setPressure()">Set Pressure</button>
                 </span>
             </div>
 
@@ -56,10 +57,12 @@
                 <div class="slidecontainer">
                     <input type="range" min="0" max="100" value="50" class="slider" id="fan-speed-slider">
                 </div>
-                <br>
+
                 <span style="display: inline;">
-                    <span id="fan-speed-slider-output"></span>
-                    <button id="fan-speed-submit" onclick="setFanSpeed()">Set Fan-Speed</button>
+                    <span id="fan-speed-slider-output" class="slider-output"></span>
+                    <br>
+                    <button id="fan-speed-submit" class="slider-submit-button" onclick="setFanSpeed()">Set
+                        Fan-Speed</button>
                 </span>
             </div>
 
