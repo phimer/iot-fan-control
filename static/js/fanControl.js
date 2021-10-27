@@ -117,7 +117,8 @@ ws.addEventListener("message", ({ data }) => {
             resetGraph: true,
             reverseDataArray: false,
             smallGraphPoints: false,
-            isAggregateData: true
+            isAggregateData: true,
+            roundDecimalPlaces: true
         });
 
 
@@ -131,10 +132,6 @@ ws.addEventListener("message", ({ data }) => {
 
         log(fanDataPoints);
 
-        //not needed, because fan stats gets updated all the time
-        // showFanStats(fanDataPoints[0], {
-        //     setpoint: false
-        // });
 
         changeGraphMulti(fanDataPoints, {
             resetGraph: true,
@@ -185,8 +182,12 @@ const changeGraphMulti = async (fanDataPoints, options = {}) => {
 
         timeStamps.push(dateString);
 
-        pressureDataPoints.push(elem.pressure.toString());
+        if (options.roundDecimalPlaces === true) {
+            elem.pressure = Math.round(elem.pressure * 10) / 10;
+            elem.speed = Math.round(elem.speed * 10) / 10;
+        }
 
+        pressureDataPoints.push(elem.pressure.toString());
         fanSpeedDataPoints.push(elem.speed.toString());
 
 
@@ -197,6 +198,7 @@ const changeGraphMulti = async (fanDataPoints, options = {}) => {
     } else {
         changeGraphPointSize(2);
     }
+
 
     fanChart.update();
 }
