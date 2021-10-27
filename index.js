@@ -10,11 +10,10 @@ var log = console.log;
 
 //essential
 const express = require('express');
-const bodyParser = require('body-parser');
 
 const app = express();
 app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true })); //delete maybe?
+app.use(express.urlencoded({ extended: true })); //delete maybe?
 
 app.use(express.static('static', { index: '_' }));
 app.set('view engine', 'ejs');
@@ -24,13 +23,12 @@ app.set('view engine', 'ejs');
 
 //extra
 const path = require('path');
-// const fs = require('fs');
 const util = require('util');
 const crypto = require('crypto');
 const pbkdf2 = util.promisify(crypto.pbkdf2);
 
 
-//mongo
+//mongodb
 const { MongoClient } = require('mongodb');
 const ObjectId = require('mongodb').ObjectId;
 
@@ -46,101 +44,6 @@ const userDataCollection = db.collection('user_data');
 const userLoginCollection = db.collection('user_login_data');
 
 const directory = path.join(__dirname, 'static');
-
-
-//testing
-
-
-
-// let from = '2021-10-14T' + clientData.from + ':00.202'
-
-
-// app.get('/testing', async (req, res) => {
-
-
-
-
-
-//     //{ time: {"$gte": ISODate('2021-10-14T12:30:40.546') }}
-
-//     const dataArray = await collection.aggregate([
-//         {
-//             $match: {
-//                 "time": {
-//                     $gte: "2021-10-14T14:59:41.546",
-//                     $lt: "2021-10-15T20:01:36.103"
-//                 }
-//             }
-//         },
-//         {
-//             $group: {
-//                 _id: {
-//                     day: "$day",
-//                     hour: "$hour",
-//                     // minute: "$minute"
-//                 },
-//                 avgSpeed: { $avg: "$speed" },
-//                 avgPressure: { $avg: "$pressure" },
-//                 firstDateInGroup: { $min: "$time" },
-//                 lastDateInGroup: { $max: "$time" },
-//                 firstHourDataPointInGroup: { $min: "$hour" },
-//                 lastHourDataPointInGroup: { $max: "$hour" },
-//                 firstMinuteDataPointInGroup: { $min: "$minute" },
-//                 lastMinuteDataPointInGroup: { $max: "$minute" },
-//             }
-//         },
-//         {
-//             $sort: { firstDateInGroup: 1, firstHourDataPointInGroup: 1, firstMinuteDataPointInGroup: 1 }
-//         }
-//     ]).toArray();
-//     //test aggregate
-//     //     const dataArray = await collection.aggregate(
-//     //         {
-//     //             //$match: {
-//     //             "time": {
-//     //                 $gte: "2021-10-14T14:59:41.546",
-//     //                 $lt: "2021-10-14T20:01:36.103"
-//     //             }
-//     //         }},
-//     //     //}
-//     //     //}
-//     //     {
-//     //         $group: {
-//     //             "_id": "time",
-//     //             speedAVG: { $avg: "speed" }
-//     //         }
-//     //     }
-//     //     // {
-//     //     //     "$group": {
-//     //     //         "_id": null,
-//     //     //         "salesPerHour": { "$avg": "$salesPerHour" }
-//     //     //     }
-
-//     // ).toArray();
-
-
-//     log("############AVG############", dataArray)
-
-//     // dataArray.forEach(elem => {
-
-//     //     let date = new Date(elem.time);
-
-
-
-//     // })
-
-
-//     // var localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);
-
-
-
-//     //testind end
-
-
-
-
-// })
-
 
 
 //mqtt
@@ -164,12 +67,10 @@ mqttClient.on('message', async (topic, message) => {
     var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
     var localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);
 
-    //console.log(localISOTime)  // => '2015-01-26T06:40:36.181'
-
     let dateSplits = localISOTime.split('T');
-    log("day:  " + dateSplits[0])
+    // log("day:  " + dateSplits[0])
 
-    log("DATE: " + localISOTime);
+    // log("DATE: " + localISOTime);
 
     mqttData.time = localISOTime;
     mqttData.day = dateSplits[0];
@@ -187,14 +88,10 @@ mqttClient.on('message', async (topic, message) => {
 
 
     wss.clients.forEach(async (client) => {
-
         if (client.readyState === WebSocket.OPEN) {
             client.send(JSON.stringify(fanDataObj));
-
         }
     })
-
-
 })
 
 
@@ -207,8 +104,6 @@ app.get('/logout', async (req, res) => {
 })
 
 app.get('/', async (req, res) => {
-
-
 
     var authheader = req.headers.authorization;
 
@@ -243,10 +138,6 @@ app.post('/createUser', async (req, res) => {
 
 //routings before authentication --
 
-
-
-
-//Make sure that the middleware is declared before the routes to which the middleware should apply.
 
 //authentication ++ 
 async function authentication(req, res, next) {
@@ -315,17 +206,15 @@ async function authenticateUser(userName, password) {
 
     const getUser = await userLoginCollection.find({ user_name: userName }).toArray();
 
-    //log(getUser)
-
 
     if (getUser[0] === undefined) {
         console.log("No user exists with that name")
         return false;
     }
-    //console.log("user password: " + getUser[0].password);
+
 
     if (getUser[0].password === hashedPassword) {
-        //console.log(`User: ${getUser[0].user_name} is authenticated - passwords match`);
+
         return true;
     } else {
         return false;
@@ -335,21 +224,15 @@ async function authenticateUser(userName, password) {
 async function hash(password) {
 
     const key = await pbkdf2(password, 'salt', 100000, 64, 'sha512').catch(err => console.log(err));
-    // console.log("key: " + key.toString('hex'))
     return key.toString('hex');
-
-
 
 }
 //authentication --
 
 
 
-
 //routings after authentication ++
 app.get('/fan-control', async (req, res) => {
-
-
 
     res.status(200).sendFile(path.join(directory, 'fanControl.html'));
 
@@ -362,8 +245,6 @@ app.get('/user-stats', async (req, res) => {
 
     const userData = await userDataCollection.find({}).toArray();
     log(userData);
-
-    //put userData into userStats ejs (in table maybe)
 
     res.status(200).render('userStats');
 
@@ -385,14 +266,6 @@ wss.on("connection", async ws => {
     //load 15 most recent from db
     const fifteenMostRecentDataPoints = await collection.find().limit(15).sort({ $natural: -1 }).toArray();
 
-
-
-
-    // log("fifteenMostRecentDataPoints: " + fifteenMostRecentDataPoints.length);
-
-    // log("first: " + fifteenMostRecentDataPoints[0].time);
-    // log("last: " + fifteenMostRecentDataPoints[14].time);
-
     let fanDataForInitialConnection = {};
     fanDataForInitialConnection.fanData = fifteenMostRecentDataPoints;
     fanDataForInitialConnection.identifier = 'initial-data';
@@ -401,7 +274,6 @@ wss.on("connection", async ws => {
 
         if (client.readyState === WebSocket.OPEN) {
             client.send(JSON.stringify(fanDataForInitialConnection));
-
         }
     })
 
@@ -410,13 +282,11 @@ wss.on("connection", async ws => {
 
         let clientData = JSON.parse(data);
 
-        // log(data)
         log(clientData)
 
         if (clientData.identifier === 'fan-data') {
 
             let dataForFan = {};
-            // { "auto": true, "pressure": 10 } `
 
             if (clientData.mode === 'auto') {
                 log("pressure set by client: " + clientData.pressure);
@@ -455,7 +325,6 @@ wss.on("connection", async ws => {
                         _id: {
                             day: "$day",
                             hour: "$hour",
-                            // minute: "$minute"
                         },
                         speed: { $avg: "$speed" },
                         pressure: { $avg: "$pressure" },
@@ -476,19 +345,9 @@ wss.on("connection", async ws => {
             log("aggregated fanData From DB: ", dataArray);
 
 
-            //deprecated
-            //get data from db for time period
-            // const fanDataFromDB = await collection.find({ time: { $gte: from, $lt: to } }).toArray();
-
-
-
             let fanDataForTimePeriod = {};
             fanDataForTimePeriod.identifier = 'aggregate-data';
             fanDataForTimePeriod.fanData = dataArray;
-
-
-
-            log("send")
 
             wss.clients.forEach(async (client) => {
 
@@ -497,7 +356,6 @@ wss.on("connection", async ws => {
 
                 }
             })
-
 
 
 
@@ -526,19 +384,7 @@ wss.on("connection", async ws => {
 
 
         }
-        // else if (clientData.identifier === 'user-stats') {
 
-
-        //     const userData = await userDataCollection.find({}).toArray();
-
-
-
-        //     // log(userData);
-
-        //     ws.send(JSON.stringify(userData));
-
-
-        // }
     })
 
 
@@ -546,39 +392,7 @@ wss.on("connection", async ws => {
         log("client has disconnected")
     })
 })
-
-
-
 //websocket --
-
-
-
-
-
-//mongo get post
-// app.get('/user', async (req, res) => {
-
-//     const getAllUsers = await collection.find({}).toArray();
-//     console.log('Found users: ', getAllUsers);
-
-//     res.status(200).json(getAllUsers);
-
-// })
-// app.post('/user', async (req, res) => {
-
-//     let user = req.body;
-//     console.log(`post user: ${user.name} `);
-
-//     const result = await collection.insertOne(user);
-//     console.log('Inserted documents =>', result);
-
-//     res.status(200).json(result);
-
-// })
-
-
-
-
 
 
 

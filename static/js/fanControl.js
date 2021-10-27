@@ -11,8 +11,6 @@ const WAIT_FOR_PRESSURE_TO_SETTLE_TIMEOUT = 30000;
 
 //connection to server websocket
 const ws = new WebSocket("ws://Localhost:8080");
-// log("ws: ", ws);
-
 
 
 ws.addEventListener("open", () => {
@@ -25,17 +23,11 @@ let pressureDataPoints = [];
 let fanSpeedDataPoints = [];
 
 
-
-
-
-
 ws.addEventListener("message", ({ data }) => {
 
     // log("PORT BOOLEAN = " + GRAPH_IS_IN_CONTINOUS_MODE);
 
     let fanDataObj = JSON.parse(data);
-
-
 
     if (fanDataObj.identifier === 'initial-data') {
 
@@ -44,9 +36,6 @@ ws.addEventListener("message", ({ data }) => {
         log(fanDataPoints);
 
         showFanStats(fanDataPoints[0]);
-
-
-
 
         changeGraphMulti(fanDataPoints, {
             resetGraph: false,
@@ -57,7 +46,6 @@ ws.addEventListener("message", ({ data }) => {
 
 
         fanChart.update();
-
 
 
     } else if (fanDataObj.identifier === 'continous-data') {
@@ -78,21 +66,6 @@ ws.addEventListener("message", ({ data }) => {
         } else {
             $('#pressure-warning').hide();
         }
-
-        //old +
-        // if (pressure !== setpoint && ((pressure - setpoint < 5 && pressure - setpoint > 0) || (setpoint - pressure < 5 && setpoint - pressure > 0))) {
-
-        //     pressureFailCount++;
-        //     log("pressure != setpoint, failCount=" + pressureFailCount);
-
-        //     if (pressureFailCount > 6) {
-        //         $('#pressure-warning').empty().append(`Pressure is not settling at ${setpoint}Pa`);
-        //     } else {
-        //         $('#pressure-warning').empty();
-
-        //     }
-        // }
-        //old -
 
         //if user is looking at aggregated data -> disable adding of new data points
         if (GRAPH_IS_IN_CONTINOUS_MODE) {
@@ -121,9 +94,6 @@ ws.addEventListener("message", ({ data }) => {
             roundDecimalPlaces: true
         });
 
-
-
-
         GRAPH_IS_IN_CONTINOUS_MODE = false;
 
     } else if (fanDataObj.identifier === 'most-recent-data') {
@@ -132,7 +102,6 @@ ws.addEventListener("message", ({ data }) => {
 
         log(fanDataPoints);
 
-
         changeGraphMulti(fanDataPoints, {
             resetGraph: true,
             reverseDataArray: true,
@@ -140,14 +109,9 @@ ws.addEventListener("message", ({ data }) => {
             isAggregateData: false
         });
 
-
-
-
         fanChart.update();
 
     }
-
-
 
 })
 
@@ -213,7 +177,6 @@ const changeGraphSingle = async (fanData, smallGraphPoints) => {
         isAggregateData: false
     });
 
-    // log("DATESTRINGG: ", dateString)
 
     timeStamps.push(dateString);
 
@@ -224,7 +187,6 @@ const changeGraphSingle = async (fanData, smallGraphPoints) => {
 
 
     //change pressure ++
-
     pressureDataPoints.push(fanData.pressure.toString());
     if (pressureDataPoints.length > DATAPOINTS) {
         pressureDataPoints.splice(0, 1);
@@ -234,7 +196,6 @@ const changeGraphSingle = async (fanData, smallGraphPoints) => {
 
 
     //change fan-speed ++
-
     fanSpeedDataPoints.push(fanData.speed.toString());
     if (fanSpeedDataPoints.length > DATAPOINTS) {
         fanSpeedDataPoints.splice(0, 1);
@@ -261,13 +222,9 @@ const changeGraphSingle = async (fanData, smallGraphPoints) => {
 
 const changeGraphPointSize = (pointRadius, hoverSize) => {
 
-
-
     //change size of graph points
     fanChart.data.datasets[0].pointRadius = pointRadius;
     fanChart.data.datasets[1].pointRadius = pointRadius;
-
-
 
 }
 
@@ -279,10 +236,7 @@ const createDateString = (data, options = {}) => {
     }
 
 
-
     let date = new Date(data.time);
-
-
 
     let month = (date.getMonth());
     let day = date.getDay();
@@ -330,11 +284,7 @@ function showFanStats(fanData) {
 
 const setPressure = async () => {
 
-
     let pressure = document.getElementById("pressure-slider").value;
-
-
-
 
     log("sending pressure to server")
 
@@ -355,8 +305,6 @@ const setPressure = async () => {
 
 
 function setFanSpeed() {
-
-
 
     let fanSpeed = document.getElementById("fan-speed-slider").value;
 
@@ -384,7 +332,6 @@ function setFanSpeed() {
 //closes websocket connection (in websocket function)
 function setTimePeriod() {
 
-
     let timeStart = document.getElementById("time-period-from-input").value;
     let timeEnd = document.getElementById("time-period-to-input").value;
 
@@ -397,9 +344,6 @@ function setTimePeriod() {
 
     ws.send(JSON.stringify(timePeriodData));
 
-
-
-
 }
 
 
@@ -408,7 +352,6 @@ const showCurrentDataInGraph = async () => {
     //open 
     GRAPH_IS_IN_CONTINOUS_MODE = true;
 
-
     let data = {};
     data.identifier = 'most-recent-data';
     data.numberOfDataPoints = 15;
@@ -416,21 +359,18 @@ const showCurrentDataInGraph = async () => {
     //request current 15 data points from server
     ws.send(JSON.stringify(data));
 
-
 }
 
 
 
 
 function login() {
-
     window.location.href = window.location.href + "fan-control/";
 }
 
 
 
 function logout() {
-
     window.location.href = "http://localhost:3000/logout/";
 }
 
@@ -534,6 +474,8 @@ fanSpeedSlider.oninput = () => {
 
 //sliders --
 
+
+//AUTO and MANUAL selection ++
 const selectManualMode = async () => {
 
     $('#pressure-input-div').hide();
@@ -582,6 +524,8 @@ const removePressureWarning = async () => {
     setTimeout(() => { waitForPressureToSettle = false; }, WAIT_FOR_PRESSURE_TO_SETTLE_TIMEOUT);
 
 }
+//AUTO and MANUAL selection --
+
 
 
 // const getUserStats = async () => {
