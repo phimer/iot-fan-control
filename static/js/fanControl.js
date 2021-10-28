@@ -237,9 +237,17 @@ const changeGraphPointSize = (pointRadius, hoverSize) => {
 
 const createDateString = (data, options = {}) => {
 
-    //if data is aggregate data -> datestring is just hour of aggregate data
+    //if data is aggregate data -> datestring is just hour of aggregate data + day and month
     if (options.isAggregateData) {
-        return data.firstHourDataPointInGroup + ':00';
+        let aggregateDataDateString;
+
+
+
+        let date = new Date(data.firstDateInGroup); //"2021-10-27T16:22:35.837"
+        log("date", date);
+
+        aggregateDataDateString = `${date.getDate()}-${date.getMonth() + 1} - ${data.firstHourDataPointInGroup}:00`;
+        return aggregateDataDateString;
     }
 
 
@@ -342,16 +350,21 @@ function setTimePeriodAndDate() {
     let timeStart = document.getElementById("time-period-from-input").value;
     let timeEnd = document.getElementById("time-period-to-input").value;
 
-    let day = $('#day-input').val();
-    let month = $('#month-input').val();
+    let startDay = $('#day-input-start').val();
+    let startMonth = $('#month-input-start').val();
+
+    let endDay = $('#day-input-end').val();
+    let endMonth = $('#month-input-end').val();
 
     log("timeStart: " + timeStart)
 
     let timePeriodData = {};
     timePeriodData.timeStart = timeStart;
     timePeriodData.timeEnd = timeEnd;
-    timePeriodData.day = day;
-    timePeriodData.month = month;
+    timePeriodData.startDay = startDay;
+    timePeriodData.startMonth = startMonth;
+    timePeriodData.endDay = endDay;
+    timePeriodData.endMonth = endMonth;
     timePeriodData.identifier = 'time-period-data';
 
     $('#no-data-available-warning').hide();

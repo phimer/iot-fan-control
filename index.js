@@ -307,14 +307,16 @@ wss.on("connection", async ws => {
 
             // log(`Datestring: ${dateString}`)
 
-            let dateString = `2021-${clientData.month}-${clientData.day}`;
+            let dateStringStart = `2021-${clientData.startMonth}-${clientData.startDay}`;
+            let dateStringEnd = `2021-${clientData.endMonth}-${clientData.endDay}`;
 
-            log(`Datestring: ${dateString}`)
+            log(`dateStringStart: ${dateStringStart}`)
+            log(`dateStringEnd: ${dateStringEnd}`)
 
-            let from = dateString + 'T' + clientData.timeStart + ':00.000'
+            let from = dateStringStart + 'T' + clientData.timeStart + ':00.000'
             log("from: " + from)
 
-            let to = dateString + 'T' + clientData.timeEnd + ':00.000'
+            let to = dateStringEnd + 'T' + clientData.timeEnd + ':00.000'
             log("to: " + to)
 
             const dataArray = await collection.aggregate([
