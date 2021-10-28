@@ -6,7 +6,7 @@
 
     <!-- <link rel="stylesheet" type="text/css" href="/styles/styles.css"> -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    
+
     <link rel="stylesheet" type="text/css" href="/style/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js"></script>
 
@@ -113,13 +113,15 @@
             <label>Set Time Period</label><br>
 
             <input type="time" step="3600000" id="time-period-from-input" name="time-period-from-input" value="16:00">
-            <input type="time" step="3600000" id="time-period-to-input" name="time-period-to-input" value="21:00">
+            <input type="time" step="3600000" id="time-period-to-input" name="time-period-to-input" value="17:00">
             <br>
             <label>Start Date</label>
-            <input type="date" id="date-input-start" name="date-input-start" min="2021-01-01" max="2021-12-31">
+            <input type="date" id="date-input-start" name="date-input-start" min="2021-01-01" max="2021-12-31"
+                value="2021-10-27">
             <br>
             <label>End Date</label>
-            <input type="date" id="date-input-end" name="date-input-end" min="2021-01-01" max="2021-12-31">
+            <input type="date" id="date-input-end" name="date-input-end" min="2021-01-01" max="2021-12-31"
+                value="2021-10-28">
             <br>
             <input type="button" value="Submit" onclick="setTimePeriodAndDate()">
 

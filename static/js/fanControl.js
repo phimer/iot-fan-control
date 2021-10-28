@@ -1,11 +1,11 @@
-let log = console.log;
+'use strict';
+const log = console.log;
 
 const DATAPOINTS = 15;
 
+let GRAPH_IS_IN_CONTINOUS_MODE = true;
 
-var GRAPH_IS_IN_CONTINOUS_MODE = true;
-
-var waitForPressureToSettle = false;
+let waitForPressureToSettle = false;
 const WAIT_FOR_PRESSURE_TO_SETTLE_TIMEOUT = 40000;
 
 
@@ -27,11 +27,11 @@ ws.addEventListener("message", ({ data }) => {
 
     // log("PORT BOOLEAN = " + GRAPH_IS_IN_CONTINOUS_MODE);
 
-    let fanDataObj = JSON.parse(data);
+    const fanDataObj = JSON.parse(data);
 
     if (fanDataObj.identifier === 'initial-data') {
 
-        let fanDataPoints = fanDataObj.fanData;
+        const fanDataPoints = fanDataObj.fanData;
 
         log(fanDataPoints);
 
@@ -50,19 +50,15 @@ ws.addEventListener("message", ({ data }) => {
 
     } else if (fanDataObj.identifier === 'continous-data') {
 
-        let fanDataPoint = fanDataObj.fanData;
+        const fanDataPoint = fanDataObj.fanData;
 
         log(fanDataPoint);
 
         showFanStats(fanDataPoint)
 
-        let pressure = fanDataPoint.pressure;
-        let setpoint = fanDataPoint.setpoint;
-
-
         //catch if pressure doesn't settle //32
         if (fanDataPoint.error === true && waitForPressureToSettle === false) {
-            $('#pressure-warning').empty().show().append(`Pressure is not settling at ${setpoint}Pa`);
+            $('#pressure-warning').empty().show().append(`Pressure is not settling at ${fanDataPoint.setpoint}Pa`);
         } else {
             $('#pressure-warning').hide();
         }
@@ -86,7 +82,7 @@ ws.addEventListener("message", ({ data }) => {
 
         }
 
-        let fanDataPoints = fanDataObj.fanData;
+        const fanDataPoints = fanDataObj.fanData;
 
         changeGraphMulti(fanDataPoints, {
             resetGraph: true,
@@ -104,7 +100,7 @@ ws.addEventListener("message", ({ data }) => {
 
     } else if (fanDataObj.identifier === 'most-recent-data') {
 
-        let fanDataPoints = fanDataObj.fanData;
+        const fanDataPoints = fanDataObj.fanData;
 
         log(fanDataPoints);
 
@@ -180,7 +176,7 @@ const changeGraphSingle = async (fanData, smallGraphPoints) => {
 
     //change time ++
 
-    let dateString = createDateString(fanData, {
+    const dateString = createDateString(fanData, {
         isAggregateData: false
     });
 
@@ -239,47 +235,31 @@ const createDateString = (data, options = {}) => {
 
     //if data is aggregate data -> datestring is just hour of aggregate data + day and month
     if (options.isAggregateData) {
+
         let aggregateDataDateString;
 
-
-
-        let date = new Date(data.firstDateInGroup); //"2021-10-27T16:22:35.837"
-        log("date", date);
+        const date = new Date(data.firstDateInGroup); //"2021-10-27T16:22:35.837"
 
         aggregateDataDateString = `${date.getDate()}-${date.getMonth() + 1} - ${data.firstHourDataPointInGroup}:00`;
         return aggregateDataDateString;
     }
 
 
-    let date = new Date(data.time);
+    const date = new Date(data.time);
 
-    let month = (date.getMonth());
-    let day = date.getDay();
+    const month = (date.getMonth());
+    const day = date.getDay();
 
-    let hours = (date.getHours() < 10 ? '0' : '') + date.getHours();
-    let minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
-    let seconds = (date.getSeconds() < 10 ? '0' : '') + date.getSeconds();
+    const hours = (date.getHours() < 10 ? '0' : '') + date.getHours();
+    const minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
+    const seconds = (date.getSeconds() < 10 ? '0' : '') + date.getSeconds();
 
-    let dateString = `${hours}:${minutes}:${seconds}`; //${day}.${month} - removed day and month
+    return `${hours}:${minutes}:${seconds}`;
 
-
-
-    return dateString;
 }
 
 
-// const setSliderValue = async (fanData) => {
-
-//     log(fanData.pressure)
-
-//     // $('#pressure-slider').value(parseInt(fanData.pressure));
-//     let slider = document.getElementById('pressure-slider');
-//     slider.value = fanData.pressure.toString();
-
-// }
-
-
-function showFanStats(fanData) {
+const showFanStats = fanData => {
 
 
     $(document).ready(() => {
@@ -289,7 +269,7 @@ function showFanStats(fanData) {
         $('#speed').empty().append(fanData.speed);
         $('#pressure').empty().append(fanData.pressure);
 
-        let fanMode = (fanData.auto === true) ? 'AUTO' : 'MANUAL';
+        const fanMode = (fanData.auto === true) ? 'AUTO' : 'MANUAL';
         $('#mode').empty().append(fanMode);
 
     })
@@ -299,11 +279,11 @@ function showFanStats(fanData) {
 
 const setPressure = async () => {
 
-    let pressure = document.getElementById("pressure-slider").value;
+    const pressure = document.getElementById("pressure-slider").value;
 
     log("sending pressure to server")
 
-    let pressureData = {};
+    const pressureData = {};
     pressureData.pressure = pressure;
     pressureData.mode = 'auto';
     pressureData.identifier = 'fan-data';
@@ -319,16 +299,16 @@ const setPressure = async () => {
 }
 
 
-function setFanSpeed() {
+const setFanSpeed = () => {
 
-    let fanSpeed = document.getElementById("fan-speed-slider").value;
+    const fanSpeed = document.getElementById("fan-speed-slider").value;
 
     $('#setpoint').empty().append(fanSpeed);
 
 
     log("sending speed to server")
 
-    let fanSpeedData = {};
+    const fanSpeedData = {};
     fanSpeedData.fanSpeed = fanSpeed;
     fanSpeedData.mode = 'manual';
     fanSpeedData.identifier = 'fan-data';
@@ -345,26 +325,23 @@ function setFanSpeed() {
 //user sets time period
 //server sends back data for that time perdiod
 //closes websocket connection (in websocket function)
-function setTimePeriodAndDate() {
+const setTimePeriodAndDate = () => {
 
-    let timeStart = document.getElementById("time-period-from-input").value;
-    let timeEnd = document.getElementById("time-period-to-input").value;
+    const timeStart = document.getElementById("time-period-from-input").value;
+    const timeEnd = document.getElementById("time-period-to-input").value;
 
-    let startDate=new Date($('#date-input-start').val());
+    const startDate = new Date($('#date-input-start').val());
+    const startDay = startDate.getDate();
+    const startMonth = startDate.getMonth() + 1;
 
-    let startDay = startDate.getDate();
-    let startMonth = startDate.getMonth()+1;
 
-    let endDate=new Date($('#date-input-end').val());
-
-    log("end:",endDate);
-
-    let endDay = endDate.getDate();
-    let endMonth = endDate.getMonth()+1;
+    const endDate = new Date($('#date-input-end').val());
+    const endDay = endDate.getDate();
+    const endMonth = endDate.getMonth() + 1;
 
     log("timeStart: " + timeStart)
 
-    let timePeriodData = {};
+    const timePeriodData = {};
     timePeriodData.timeStart = timeStart;
     timePeriodData.timeEnd = timeEnd;
     timePeriodData.startDay = startDay;
@@ -386,7 +363,7 @@ const showCurrentDataInGraph = async () => {
     //open 
     GRAPH_IS_IN_CONTINOUS_MODE = true;
 
-    let data = {};
+    const data = {};
     data.identifier = 'most-recent-data';
     data.numberOfDataPoints = 15;
 
@@ -401,24 +378,21 @@ const showCurrentDataInGraph = async () => {
 
 
 
-function login() {
+const login = () => {
     window.location.href = window.location.href + "fan-control/";
 }
 
 
 
-function logout() {
+const logout = () => {
     window.location.href = "http://localhost:3000/logout/";
 }
 
 
 
 //GRPAH//////////////////////////////////////////////////////////
-
-
-//var ctx = document.getElementById('myChart').getContext('2d');
-var ctx = $('#pressure-chart');
-var fanChart = new Chart(ctx, {
+const ctx = $('#pressure-chart');
+const fanChart = new Chart(ctx, {
     type: 'line', //bar, horizontalBar, pie, line, doughnut, rada, polarArea
     data: {
         labels: timeStamps,
@@ -484,29 +458,29 @@ var fanChart = new Chart(ctx, {
 
 
 //sliders ++
-var pressureSlider = document.getElementById("pressure-slider");
-var pressureSliderOutput = document.getElementById("pressure-slider-output");
+const pressureSlider = document.getElementById("pressure-slider");
+const pressureSliderOutput = document.getElementById("pressure-slider-output");
 pressureSliderOutput.innerHTML = pressureSlider.value + 'Pa';
 
-var fanSpeedSlider = document.getElementById("fan-speed-slider");
-var fanSpeedSliderOutput = document.getElementById("fan-speed-slider-output");
+const fanSpeedSlider = document.getElementById("fan-speed-slider");
+const fanSpeedSliderOutput = document.getElementById("fan-speed-slider-output");
 fanSpeedSliderOutput.innerHTML = fanSpeedSlider.value + '%';
 
 // Update the current slider value (each time you drag the slider handle)
 pressureSlider.oninput = () => {
 
-    let val = jQuery('#pressure-slider').val();
+    const pressureSliderValue = jQuery('#pressure-slider').val();
 
 
-    pressureSliderOutput.innerHTML = val + 'Pa';
+    pressureSliderOutput.innerHTML = pressureSliderValue + 'Pa';
 }
 
 fanSpeedSlider.oninput = () => {
 
-    let val = jQuery('#fan-speed-slider').val();
+    const fanSpeedSliderValue = jQuery('#fan-speed-slider').val();
 
 
-    fanSpeedSliderOutput.innerHTML = val + '%';
+    fanSpeedSliderOutput.innerHTML = fanSpeedSliderValue + '%';
 }
 
 //sliders --
@@ -540,16 +514,11 @@ const selectAutoMode = async () => {
 
 const setButtonToAutoMode = () => {
 
-    console.log("hello")
-
     $('#auto-button').addClass('button-activated');
     $('#manual-button').addClass('button-deactivated');
 
-    // $('#auto-button').toggleClass('button-activated');
-    // $('#manual-button').toggleClass('button-deactivated');
 }
-
-setButtonToAutoMode();
+setButtonToAutoMode(); //do when page loads
 
 
 const removePressureWarning = async () => {
@@ -563,9 +532,3 @@ const removePressureWarning = async () => {
 
 }
 //AUTO and MANUAL selection --
-
-
-
-// const getUserStats = async () => {
-//     window.location.href = "http://localhost"
-// }

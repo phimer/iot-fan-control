@@ -1,12 +1,6 @@
-//websocket - send to socket outside of function
-//https://github.com/websockets/ws/issues/367
-
-//ws to all
-//https://github.com/websockets/ws#server-broadcast
-
 'use strict';
 
-var log = console.log;
+const log = console.log;
 
 //essential
 const express = require('express');
@@ -53,7 +47,7 @@ var mqttClient = mqtt.connect('mqtt://127.0.0.1:1883')
 mqttClient.on('connect', () => {
     mqttClient.subscribe('controller/status', err => {
         if (err) {
-            log("Error. Subscribe to controller/status failed");
+            log("Error - Subscribe to controller/status failed");
         }
     })
 })
@@ -61,16 +55,13 @@ mqttClient.on('connect', () => {
 
 mqttClient.on('message', async (topic, message) => {
 
-    let mqttData = JSON.parse(message.toString())
+    const mqttData = JSON.parse(message.toString())
 
 
-    var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
-    var localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);
+    const tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+    const localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);
 
-    let dateSplits = localISOTime.split('T');
-    // log("day:  " + dateSplits[0])
-
-    // log("DATE: " + localISOTime);
+    const dateSplits = localISOTime.split('T');
 
     mqttData.time = localISOTime;
     mqttData.day = dateSplits[0];
@@ -82,7 +73,7 @@ mqttClient.on('message', async (topic, message) => {
     console.log(`data saved to database\n`);
 
 
-    let fanDataObj = {};
+    const fanDataObj = {};
     fanDataObj.fanData = mqttData;
     fanDataObj.identifier = 'continous-data';
 
@@ -117,40 +108,38 @@ app.get('/createUser', async (req, res) => {
 
 app.post('/createUser', async (req, res) => {
 
-    let user = req.body;
+    const user = req.body;
 
-    console.log(`post user: ${user.name}`);
+    log(`post user: ${user.name}`);
 
 
-    let hashedPassword = await hash(user.password);
+    const hashedPassword = await hash(user.password);
     user.password = hashedPassword;
-    console.log("userpassword: " + user.password)
-    console.log("user_name: " + user.name)
+    log("userpassword: " + user.password)
+    log("user_name: " + user.name)
 
 
     const result = await userLoginCollection.insertOne({ user_name: user.name, password: user.password });
-    //console.log('Inserted documents =>', result);
+
 
     res.status(200).json(result);
 
 
 })
 
+
+
 //routings before authentication --
 
-
 //authentication ++ 
-async function authentication(req, res, next) {
+const authentication = async (req, res, next) => {
 
-    log("authentication function")
-
-
-    var authheader = req.headers.authorization;
+    const authheader = req.headers.authorization;
 
     if (!authheader) {
 
         console.log("no auth header");
-        var err = new Error('You are not authenticated!');
+        const err = new Error('You are not authenticated!');
         res.setHeader('WWW-Authenticate', 'Basic');
         err.status = 401;
         return next(err)
@@ -159,10 +148,10 @@ async function authentication(req, res, next) {
     }
 
 
-    var auth = new Buffer.from(authheader.split(' ')[1],
+    const auth = new Buffer.from(authheader.split(' ')[1],
         'base64').toString().split(':');
-    var user = auth[0];
-    var pass = auth[1];
+    const user = auth[0];
+    const pass = auth[1];
 
 
 
@@ -170,10 +159,9 @@ async function authentication(req, res, next) {
 
         log(`user ${user} authenticated`)
 
-        let loginTime = new Date();
+        const loginTime = new Date();
 
         const result = await userDataCollection.insertOne({ user_name: user, login_time: loginTime });
-        //console.log('Inserted documents =>', result);
 
 
         next(); //calls next middleware function in the stack
@@ -183,7 +171,7 @@ async function authentication(req, res, next) {
 
         log('user NOT authenticated')
 
-        var err = new Error('You are not authenticated!');
+        const err = new Error('You are not authenticated!');
         res.setHeader('WWW-Authenticate', 'Basic');
         err.status = 401;
         return next(err);
@@ -199,10 +187,10 @@ app.use(authentication)
 
 
 
-async function authenticateUser(userName, password) {
+const authenticateUser = async (userName, password) => {
 
 
-    let hashedPassword = await hash(password);
+    const hashedPassword = await hash(password);
 
     const getUser = await userLoginCollection.find({ user_name: userName }).toArray();
 
@@ -212,16 +200,14 @@ async function authenticateUser(userName, password) {
         return false;
     }
 
-
     if (getUser[0].password === hashedPassword) {
-
         return true;
     } else {
         return false;
     }
 }
 
-async function hash(password) {
+const hash = async password => {
 
     const key = await pbkdf2(password, 'salt', 100000, 64, 'sha512').catch(err => console.log(err));
     return key.toString('hex');
@@ -266,7 +252,7 @@ wss.on("connection", async ws => {
     //load 15 most recent from db
     const fifteenMostRecentDataPoints = await collection.find().limit(15).sort({ $natural: -1 }).toArray();
 
-    let fanDataForInitialConnection = {};
+    const fanDataForInitialConnection = {};
     fanDataForInitialConnection.fanData = fifteenMostRecentDataPoints;
     fanDataForInitialConnection.identifier = 'initial-data';
 
@@ -280,13 +266,13 @@ wss.on("connection", async ws => {
 
     ws.on("message", async data => {
 
-        let clientData = JSON.parse(data);
+        const clientData = JSON.parse(data);
 
         log(clientData)
 
         if (clientData.identifier === 'fan-data') {
 
-            let dataForFan = {};
+            const dataForFan = {};
 
             if (clientData.mode === 'auto') {
                 log("pressure set by client: " + clientData.pressure);
@@ -303,20 +289,21 @@ wss.on("connection", async ws => {
 
         } else if (clientData.identifier === 'time-period-data') {
 
-            // let dateString = new Date().toISOString().split('T')[0];
 
-            // log(`Datestring: ${dateString}`)
-
-            let dateStringStart = `2021-${clientData.startMonth}-${clientData.startDay}`;
-            let dateStringEnd = `2021-${clientData.endMonth}-${clientData.endDay}`;
+            const dateStringStart = `2021-${clientData.startMonth}-${clientData.startDay}`;
+            const dateStringEnd = `2021-${clientData.endMonth}-${clientData.endDay}`;
 
             log(`dateStringStart: ${dateStringStart}`)
             log(`dateStringEnd: ${dateStringEnd}`)
 
-            let from = dateStringStart + 'T' + clientData.timeStart + ':00.000'
+            const timeEndPlusOne = await addOneHourToHourMinuteString(clientData.timeEnd);
+            log(timeEndPlusOne)
+
+
+            const from = dateStringStart + 'T' + clientData.timeStart + ':00.000'
             log("from: " + from)
 
-            let to = dateStringEnd + 'T' + clientData.timeEnd + ':00.000'
+            const to = dateStringEnd + 'T' + timeEndPlusOne + ':00.000'
             log("to: " + to)
 
             const dataArray = await collection.aggregate([
@@ -350,10 +337,10 @@ wss.on("connection", async ws => {
                 }
             ]).toArray();
 
-            log("aggregated fanData From DB: ", dataArray);
+            // log("aggregated fanData From DB: ", dataArray);
 
 
-            let fanDataForTimePeriod = {};
+            const fanDataForTimePeriod = {};
             fanDataForTimePeriod.identifier = 'aggregate-data';
             fanDataForTimePeriod.fanData = dataArray;
 
@@ -371,13 +358,13 @@ wss.on("connection", async ws => {
 
             //send 15 most recent datapoints
 
-            let numberOfDataPoints = clientData.numberOfDataPoints;
+            const numberOfDataPoints = clientData.numberOfDataPoints;
 
             //load 15 most recent from db
             const mostRecentDataPoints = await collection.find().limit(numberOfDataPoints).sort({ $natural: -1 }).toArray();
 
 
-            let fanDataWithMostRecentDataPoints = {};
+            const fanDataWithMostRecentDataPoints = {};
             fanDataWithMostRecentDataPoints.fanData = mostRecentDataPoints;
             fanDataWithMostRecentDataPoints.identifier = 'most-recent-data';
 
@@ -402,10 +389,19 @@ wss.on("connection", async ws => {
 })
 //websocket --
 
+//helper ++
+const addOneHourToHourMinuteString = async (hourMinuteString) => {
+
+    const splits = hourMinuteString.split(':');
+    const hourPlusOne = (parseInt(splits[0]) + 1).toString();
+
+    return `${hourPlusOne}:${splits[1]}`;
+}
+//helper --
 
 
 //error handling
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
     res.status(404);
 
     if (req.accepts('html')) {
