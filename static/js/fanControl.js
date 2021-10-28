@@ -25,8 +25,6 @@ let fanSpeedDataPoints = [];
 
 ws.addEventListener("message", ({ data }) => {
 
-    // log("PORT BOOLEAN = " + GRAPH_IS_IN_CONTINOUS_MODE);
-
     const fanDataObj = JSON.parse(data);
 
     if (fanDataObj.identifier === 'initial-data') {
@@ -65,8 +63,6 @@ ws.addEventListener("message", ({ data }) => {
 
         //if user is looking at aggregated data -> disable adding of new data points
         if (GRAPH_IS_IN_CONTINOUS_MODE) {
-
-            // log('GRAPH_IS_IN_CONTINOUS_MODE = true')
 
             //add point to graph
             changeGraphSingle(fanDataPoint, false);
