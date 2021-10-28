@@ -350,11 +350,17 @@ function setTimePeriodAndDate() {
     let timeStart = document.getElementById("time-period-from-input").value;
     let timeEnd = document.getElementById("time-period-to-input").value;
 
-    let startDay = $('#day-input-start').val();
-    let startMonth = $('#month-input-start').val();
+    let startDate=new Date($('#date-input-start').val());
 
-    let endDay = $('#day-input-end').val();
-    let endMonth = $('#month-input-end').val();
+    let startDay = startDate.getDate();
+    let startMonth = startDate.getMonth()+1;
+
+    let endDate=new Date($('#date-input-end').val());
+
+    log("end:",endDate);
+
+    let endDay = endDate.getDate();
+    let endMonth = endDate.getMonth()+1;
 
     log("timeStart: " + timeStart)
 
