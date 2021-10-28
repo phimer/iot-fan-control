@@ -303,7 +303,13 @@ wss.on("connection", async ws => {
 
         } else if (clientData.identifier === 'time-period-data') {
 
-            let dateString = new Date().toISOString().split('T')[0];
+            // let dateString = new Date().toISOString().split('T')[0];
+
+            // log(`Datestring: ${dateString}`)
+
+            let dateString = `2021-${clientData.month}-${clientData.day}`;
+
+            log(`Datestring: ${dateString}`)
 
             let from = dateString + 'T' + clientData.timeStart + ':00.000'
             log("from: " + from)

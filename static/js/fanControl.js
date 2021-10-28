@@ -6,7 +6,7 @@ const DATAPOINTS = 15;
 var GRAPH_IS_IN_CONTINOUS_MODE = true;
 
 var waitForPressureToSettle = false;
-const WAIT_FOR_PRESSURE_TO_SETTLE_TIMEOUT = 30000;
+const WAIT_FOR_PRESSURE_TO_SETTLE_TIMEOUT = 40000;
 
 
 //connection to server websocket
@@ -78,11 +78,13 @@ ws.addEventListener("message", ({ data }) => {
         }
 
     } else if (fanDataObj.identifier === 'aggregate-data') {
-        log("aggregate-data")
+        // log("aggregate-data")
 
+        if (fanDataObj.fanData.length === 0) { //no data for time period
 
-        //todo time period under one hour should display 5 minute aggregates, over 1 hour should hourly aggregates?
+            $('#no-data-available-warning').empty().show().append(`No data available for current time period`);
 
+        }
 
         let fanDataPoints = fanDataObj.fanData;
 
@@ -93,6 +95,10 @@ ws.addEventListener("message", ({ data }) => {
             isAggregateData: true,
             roundDecimalPlaces: true
         });
+
+
+
+
 
         GRAPH_IS_IN_CONTINOUS_MODE = false;
 
@@ -112,6 +118,7 @@ ws.addEventListener("message", ({ data }) => {
         fanChart.update();
 
     }
+
 
 })
 
@@ -330,17 +337,25 @@ function setFanSpeed() {
 //user sets time period
 //server sends back data for that time perdiod
 //closes websocket connection (in websocket function)
-function setTimePeriod() {
+function setTimePeriodAndDate() {
 
     let timeStart = document.getElementById("time-period-from-input").value;
     let timeEnd = document.getElementById("time-period-to-input").value;
+
+    let day = $('#day-input').val();
+    let month = $('#month-input').val();
 
     log("timeStart: " + timeStart)
 
     let timePeriodData = {};
     timePeriodData.timeStart = timeStart;
     timePeriodData.timeEnd = timeEnd;
+    timePeriodData.day = day;
+    timePeriodData.month = month;
     timePeriodData.identifier = 'time-period-data';
+
+    $('#no-data-available-warning').hide();
+
 
     ws.send(JSON.stringify(timePeriodData));
 
@@ -355,6 +370,9 @@ const showCurrentDataInGraph = async () => {
     let data = {};
     data.identifier = 'most-recent-data';
     data.numberOfDataPoints = 15;
+
+
+    $('#no-data-available-warning').hide();
 
     //request current 15 data points from server
     ws.send(JSON.stringify(data));

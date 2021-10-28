@@ -106,16 +106,20 @@
         </div>
 
 
-        <h2 id="pressure-warning" hidden></h2>
+        <h2 id="pressure-warning" class="warning-below-graph" hidden></h2>
+        <h2 id="no-data-available-warning" class="warning-below-graph" hidden></h2>
 
 
         <div id="time-period-input-div">
             <label>Set Time Period</label><br>
 
             <input type="time" step="3600000" id="time-period-from-input" name="time-period-from-input" value="16:00">
-            <input type="time" step="3600000" id="time-period-to-input" name="time-period-to-input" value="19:40">
+            <input type="time" step="3600000" id="time-period-to-input" name="time-period-to-input" value="21:00">
 
-            <input type="button" value="Submit" onclick="setTimePeriod()">
+            <input type="text" id="day-input" name="day-input" value="27">
+            <input type="text" id="month-input" name="month-input" value="10">
+
+            <input type="button" value="Submit" onclick="setTimePeriodAndDate()">
 
         </div>
 
