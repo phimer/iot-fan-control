@@ -6,7 +6,7 @@
 
     <!-- <link rel="stylesheet" type="text/css" href="/styles/styles.css"> -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/style/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js"></script>
 
@@ -15,17 +15,15 @@
 
 <body>
 
-
-    <div id="logout-div">
-        <button class="button" onclick=logout()>logout</button>
-    </div>
-
-    <div id="user-stats-div">
-
-
-        <input type="button" onclick="location.href='/user-stats';" value="user stats" />
-    </div>
-
+    <ul class="flex items-center justify-between bg-gray-200">
+        <li class="mr-6 p-3">
+            <a class="text-2xl" href="/user-stats">User stats</a>
+        </li>
+        <li class="mr-6 p-3 ">
+            <button class="button" onclick=logout()>Logout</button>
+        </li>
+    </ul>
+    <br>
 
     <div id="main-view">
 
@@ -45,7 +43,8 @@
                 <span style="display: inline;">
                     <span id="pressure-slider-output" class="slider-output"></span>
                     <br>
-                    <button id="pressure-submit" style="margin-top: 10px;" onclick="setPressure()">Set Pressure</button>
+                    <button id="pressure-submit" class="btn btn_color" style="margin-top: 10px;"
+                        onclick="setPressure()">Set Pressure</button>
                 </span>
             </div>
 
@@ -110,27 +109,27 @@
 
 
         <div id="time-period-input-div">
-            <label>Set Time Period</label><br>
-
+            <label class="underline">Set Time Period</label><br><br>
+            <label>Start Time</label>
             <input type="time" step="3600000" id="time-period-from-input" name="time-period-from-input" value="16:00">
-            <input type="time" step="3600000" id="time-period-to-input" name="time-period-to-input" value="17:00">
+            <label>End Time</label>
+            <input type="time" step="3600000" id="time-period-to-input" name="time-period-to-input" value="21:00">
             <br>
             <label>Start Date</label>
-            <input type="date" id="date-input-start" name="date-input-start" min="2021-01-01" max="2021-12-31"
-                value="2021-10-27">
-            <br>
+            <input type="date" id="date-input-start" name="date-input-start" min="2021-01-01" max="2021-12-31">
+            <!-- <br> -->
             <label>End Date</label>
-            <input type="date" id="date-input-end" name="date-input-end" min="2021-01-01" max="2021-12-31"
-                value="2021-10-28">
-            <br>
-            <input type="button" value="Submit" onclick="setTimePeriodAndDate()">
+            <input type="date" id="date-input-end" name="date-input-end" min="2021-01-01" max="2021-12-31">
+            <br><br>
+
 
         </div>
-
+        <input type="button" class="btn btn_color btn_border" value="Submit" onclick="setTimePeriodAndDate()">
         <div id="reset-graph-div">
-            <button id="reset-graph-button" class="button" onclick=showCurrentDataInGraph()>Show current Graph</button>
+            <button id="reset-graph-button" class="button btn btn_color" onclick=showCurrentDataInGraph()>Show current
+                Graph</button>
         </div>
-
+        <br><br>
 
 
     </div>
