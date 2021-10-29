@@ -1,11 +1,14 @@
 * {
   font-family: Helvetica, sans-serif;
-  
+  border-radius: 5px;
+
+
 }
 
 .slidecontainer {
   width: 80%; /* Width of the outside container */
   margin-left: 10%;
+  margin-top: 10px;
   
 
 }
@@ -49,10 +52,10 @@
 
 
   height: 500px;
-  border: 1px solid cyan;
+  border: 2px solid cyan;
   justify-content: center;
 
-  margin: 20px 0 0 0;
+  margin: 20px 0 0 0 ;
 
 }
 
@@ -67,38 +70,46 @@
 
 .auto-manual-button {
   width: 30%;
-  border: 1px solid cyan;
+  border: 2px solid cyan;
 }
 
 
 .fan-raw-data-divs {
-  border: 1px solid cyan;
+  border: 2px solid cyan;
   height: 90px;
   border-collapse: collapse;
-  
+  /* margin: 20px 0 0 0; */
 
 }
+
 
 
 #fan-raw-data {
 
   overflow: hidden; 
   margin: 10px 0 0 0;
+
 }
 #pressure-div {
   width: 50%;
   float:left; 
+  margin-right: 10px;
+  margin-bottom: 10px;
   
 }
 #speed-div {
   overflow: hidden; 
+  margin-left: 10px;
+  margin-bottom: 10px;
 }
 #setpoint-div {
   width: 50%;
   float:left; 
+  margin-right: 10px;
 }
 #mode-div {
   overflow: hidden; 
+  margin-left: 10px;
 }
 
 .fan-raw-data-headings {
@@ -113,9 +124,9 @@
 }
 
 #fan-control {
-  border: 1px solid cyan;
+  border: 2px solid cyan;
 
-
+margin-bottom: 20px;
   padding: 10px 0 10px 0;
 
 }
@@ -140,12 +151,13 @@
 .slider-output {
   position: relative;
   top: 5px;
+
 }
 
 
 .warning-below-graph {
   color: red;
-  border: 1px solid red;
+  border: 2px solid red;
   margin: 10px 0 10px 0;
   padding: 5px 0 5px 0;
 
@@ -160,6 +172,7 @@
   padding: 7px 20px;
   font-size: 16px;
   cursor: pointer;
+  border-radius: 5px;
 }
 
 .btn_color{
@@ -178,8 +191,8 @@
 #time-period-input-div{
 
   
-  border: 1px solid cyan;
-  margin: 10px 0 10px 0;
+  border: 2px solid cyan;
+  margin: 20px 0 5px 0;
   padding: 5px 0 10px 0;
  
 
@@ -239,4 +252,11 @@
 .bot-buttons {
   width: 50%;
   
+}
+
+
+
+.pressure-speed-submit-button {
+  width: 30%;
+
 }

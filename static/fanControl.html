@@ -15,12 +15,12 @@
 
 <body>
 
-    <ul class="flex items-center justify-between bg-gray-200">
-        <li class="mr-6 p-3">
-            <a class="text-2xl" href="/user-stats">User stats</a>
+    <ul class="flex items-center justify-between  bg-gray-200">
+        <li class="ml-2 p-3">
+            <button class="button" style="float:right;" onclick=showUserStats()>User Statistics</button>
         </li>
-        <li class="mr-6 p-3 ">
-            <button class="button" onclick=logout()>Logout</button>
+        <li class="mr-2 p-3 ">
+            <button style="float: right;" class="button" onclick=logout()>Logout</button>
         </li>
     </ul>
     <br>
@@ -39,8 +39,8 @@
 
             <div style="position: relative; top: 10px; padding-bottom: 10px;">
 
-                <div id="pressure-input-div">
-                    <label style="position: relative; top: 5px;">Select pressure between 0Pa and 120Pa</label><br>
+                <div id="pressure-input-div" style="font-size: 20px;">
+                    <!-- <label style="position: relative; top: 5px;">Select pressure between 0Pa and 120Pa</label><br> -->
                     <div class="slidecontainer">
                         <input type="range" min="0" max="120" value="60" class="slider" id="pressure-slider">
                     </div>
@@ -48,15 +48,16 @@
                     <span style="display: inline;">
                         <span id="pressure-slider-output" class="slider-output"></span>
                         <br>
-                        <button id="pressure-submit" class="btn btn_color" style="margin-top: 10px;"
-                            onclick="setPressure()">Set Pressure</button>
+                        <button id="pressure-submit" class="btn btn_color pressure-speed-submit-button"
+                            style="margin-top: 10px;" onclick="setPressure()">Set Pressure</button>
                     </span>
                 </div>
 
 
 
-                <div id="fan-speed-input-div" hidden>
-                    <label style="position: relative; top: 5px;">Select fan-speed between 0% and 100%</label><br>
+                <div id="fan-speed-input-div" hidden style="font-size: 20px;">
+                    <!-- <label style=" position: relative; top: 5px;">Select fan-speed between 0% and
+                        100%</label><br> -->
                     <div class="slidecontainer">
                         <input type="range" min="0" max="100" value="50" class="slider" id="fan-speed-slider">
                     </div>
@@ -64,7 +65,8 @@
                     <span style="display: inline;">
                         <span id="fan-speed-slider-output" class="slider-output"></span>
                         <br>
-                        <button id="fan-speed-submit" class="btn btn_color" style="margin-top: 10px;" onclick="
+                        <button id="fan-speed-submit" class="btn btn_color pressure-speed-submit-button" style="
+                            margin-top: 10px;" onclick="
                         setFanSpeed()">Set
                             Fan-Speed</button>
                     </span>
@@ -152,12 +154,12 @@
 
         <div id="submit-and-current-graph-buttons" style="display:flex">
 
-            <button id="reset-graph-button" style="margin-right: 5px;" class="button btn btn_color bot-buttons"
+            <button id="reset-graph-button" style="margin-right: 2px;" class="button btn btn_color bot-buttons"
                 onclick=showCurrentDataInGraph()>Show
                 current
                 Graph</button>
 
-            <input type="button" style="margin-left: 5px;" class="btn btn_color btn_border bot-buttons" value="Submit"
+            <input type="button" style="margin-left: 2px;" class="btn btn_color btn_border bot-buttons" value="Submit"
                 onclick="setTimePeriodAndDate()">
 
         </div>

@@ -545,3 +545,12 @@ setCurrentDateInDatePicker();
 
 
 //set current date in date picker --
+
+
+
+
+const showUserStats = () => {
+
+    window.location.href = "http://localhost:3000/user-stats/"
+
+}
