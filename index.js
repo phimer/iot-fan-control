@@ -102,31 +102,6 @@ app.get('/', async (req, res) => {
 
 })
 
-app.get('/createUser', async (req, res) => {
-    res.status(200).sendFile(path.join(directory, 'createUser.html'));
-})
-
-app.post('/createUser', async (req, res) => {
-
-    const user = req.body;
-
-    log(`post user: ${user.name}`);
-
-
-    const hashedPassword = await hash(user.password);
-    user.password = hashedPassword;
-    log("userpassword: " + user.password)
-    log("user_name: " + user.name)
-
-
-    const result = await userLoginCollection.insertOne({ user_name: user.name, password: user.password });
-
-
-    res.status(200).json(result);
-
-
-})
-
 
 
 //routings before authentication --
@@ -215,6 +190,30 @@ const hash = async password => {
 }
 //authentication --
 
+// app.get('/createUser', async (req, res) => {
+//     res.status(200).sendFile(path.join(directory, 'createUser.html'));
+// })
+
+// app.post('/createUser', async (req, res) => {
+
+//     const user = req.body;
+
+//     log(`post user: ${user.name}`);
+
+
+//     const hashedPassword = await hash(user.password);
+//     user.password = hashedPassword;
+//     log("userpassword: " + user.password)
+//     log("user_name: " + user.name)
+
+
+//     const result = await userLoginCollection.insertOne({ user_name: user.name, password: user.password });
+
+
+//     res.status(200).json(result);
+
+
+// })
 
 
 //routings after authentication ++
