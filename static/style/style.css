@@ -3,7 +3,6 @@
   
 }
 
-
 .slidecontainer {
   width: 80%; /* Width of the outside container */
   margin-left: 10%;
@@ -81,23 +80,23 @@
   width: 50%;
   float:left; 
   border: 1px solid cyan;
-  height: 80px;
+  height: 90px;
 }
 #speed-div {
   border: 1px solid cyan;
   overflow: hidden; 
-  height: 80px;
+  height: 90px;
 }
 #setpoint-div {
   width: 50%;
   float:left; 
   border: 1px solid cyan;
-  height: 80px;
+  height: 90px;
 }
 #mode-div {
   border: 1px solid cyan;
   overflow: hidden; 
-  height: 80px;
+  height: 90px;
 }
 
 .fan-raw-data-headings {
@@ -149,6 +148,44 @@
   padding: 5px 0 5px 0;
   width: 70%;
  
+}
+
+.btn{
+
+  border: 2px solid black;
+  background-color: white;
+  color: black;
+  padding: 7px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.btn_color{
+
+  border-color: cyan;
+  color: cyan;
+
+}
+
+.btn_color:hover {
+  background-color: cyan;
+  color: white;
+}
+
+.btn_border{
+
+  border-bottom: none;
+
+}
+
+#time-period-input-div{
+
+ 
+  border: 1px solid cyan;
+  margin: 10px 0 10px 15%;
+  padding: 5px 0 5px 0;
+  width: 70%;
+
 }
 
 
