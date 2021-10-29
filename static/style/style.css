@@ -47,56 +47,58 @@
 
 #chart-div {
 
-  width:70%;
+
   height: 500px;
   border: 1px solid cyan;
   justify-content: center;
 
-  margin: 20px 0 0 15%;
+  margin: 20px 0 0 0;
 
 }
 
 #main-view {
+  width:70%;
   text-align: center;
   justify-content: center;
   align-items: center;
+  margin: 0 0 0 15%;
 
 }
 
 .auto-manual-button {
-  width: 100px;
+  width: 30%;
+  border: 1px solid cyan;
 }
 
 
+.fan-raw-data-divs {
+  border: 1px solid cyan;
+  height: 90px;
+  border-collapse: collapse;
+  
 
+}
 
 
 #fan-raw-data {
-  width: 70%;
+
   overflow: hidden; 
-  margin: 10px 0 0 15%;
+  margin: 10px 0 0 0;
 }
 #pressure-div {
   width: 50%;
   float:left; 
-  border: 1px solid cyan;
-  height: 90px;
+  
 }
 #speed-div {
-  border: 1px solid cyan;
   overflow: hidden; 
-  height: 90px;
 }
 #setpoint-div {
   width: 50%;
   float:left; 
-  border: 1px solid cyan;
-  height: 90px;
 }
 #mode-div {
-  border: 1px solid cyan;
   overflow: hidden; 
-  height: 90px;
 }
 
 .fan-raw-data-headings {
@@ -104,7 +106,7 @@
   position:relative;
 }
 .fan-raw-data-values {
-  top: 10px;
+  top: 0px;
   font-size: 40px;
   position: relative;
 
@@ -112,8 +114,8 @@
 
 #fan-control {
   border: 1px solid cyan;
-  width: 70%;
-  margin-left: 15%;
+
+
   padding: 10px 0 10px 0;
 
 }
@@ -122,12 +124,12 @@
 
 
 .button-activated {
-  background-color: cyan !important;
+  background-color: #b8f9ff !important;
 }
 
 
 .button-deactivated {
-  background-color: #f2f2f2;
+  background-color:white;
 }
 
 
@@ -144,9 +146,9 @@
 .warning-below-graph {
   color: red;
   border: 1px solid red;
-  margin: 10px 0 10px 15%;
+  margin: 10px 0 10px 0;
   padding: 5px 0 5px 0;
-  width: 70%;
+
  
 }
 
@@ -172,20 +174,69 @@
   color: white;
 }
 
-.btn_border{
-
-  border-bottom: none;
-
-}
 
 #time-period-input-div{
 
- 
+  
   border: 1px solid cyan;
-  margin: 10px 0 10px 15%;
-  padding: 5px 0 5px 0;
-  width: 70%;
+  margin: 10px 0 10px 0;
+  padding: 5px 0 10px 0;
+ 
 
 }
 
+.time-and-date {
+  
+  display: flex;
 
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  position: relative;
+  left: 25%
+
+
+}
+
+.time-and-date-inputs {
+  font-size: 30px;
+}
+
+/* #start-time {
+
+  position: relative;
+  left: 15%;
+} 
+
+#end-time {
+
+  position: relative;
+  right: 15%;
+}
+
+#start-date {
+  float: left;
+} 
+
+#end-date {
+  float: right;
+} */
+
+#time {
+  /* border: 1px solid cyan; */
+}
+
+
+.time-date-labels{
+  font-size: 20px;
+}
+
+.time-date-input-div {
+  position: relative;
+}
+
+.bot-buttons {
+  width: 50%;
+  
+}

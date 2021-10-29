@@ -528,3 +528,20 @@ const removePressureWarning = async () => {
 
 }
 //AUTO and MANUAL selection --
+
+
+
+//set current date in date picker ++
+const setCurrentDateInDatePicker = async () => {
+
+    const date = new Date();
+
+
+    $('#date-input-start').val(`2021-${(date.getMonth()) + 1}-${date.getDate()}`);
+    $('#date-input-end').val(`2021-${(date.getMonth()) + 1}-${date.getDate()}`);
+}
+
+setCurrentDateInDatePicker();
+
+
+//set current date in date picker --

@@ -29,66 +29,72 @@
 
         <div id="fan-control">
 
-            <button id="auto-button" class="auto-manual-button button-deactivated" title="button"
-                onclick="selectAutoMode()">AUTO </button>
-            <button id="manual-button" class="auto-manual-button button-deactivated" title="button"
-                onclick="selectManualMode()">MANUAL</button>
+            <div>
+                <button id="auto-button" class="auto-manual-button button-deactivated btn btn_color" title="button"
+                    onclick="selectAutoMode()">AUTO </button>
+                <button id="manual-button" class="auto-manual-button button-deactivated btn btn_color" title="button"
+                    onclick="selectManualMode()">MANUAL</button>
 
-            <div id="pressure-input-div">
-                <label>Select pressure between 0Pa and 120Pa</label><br>
-                <div class="slidecontainer">
-                    <input type="range" min="0" max="120" value="60" class="slider" id="pressure-slider">
-                </div>
-
-                <span style="display: inline;">
-                    <span id="pressure-slider-output" class="slider-output"></span>
-                    <br>
-                    <button id="pressure-submit" class="btn btn_color" style="margin-top: 10px;"
-                        onclick="setPressure()">Set Pressure</button>
-                </span>
             </div>
 
+            <div style="position: relative; top: 10px; padding-bottom: 10px;">
 
+                <div id="pressure-input-div">
+                    <label style="position: relative; top: 5px;">Select pressure between 0Pa and 120Pa</label><br>
+                    <div class="slidecontainer">
+                        <input type="range" min="0" max="120" value="60" class="slider" id="pressure-slider">
+                    </div>
 
-            <div id="fan-speed-input-div" hidden>
-                <label>Select fan-speed between 0% and 100%</label><br>
-                <div class="slidecontainer">
-                    <input type="range" min="0" max="100" value="50" class="slider" id="fan-speed-slider">
+                    <span style="display: inline;">
+                        <span id="pressure-slider-output" class="slider-output"></span>
+                        <br>
+                        <button id="pressure-submit" class="btn btn_color" style="margin-top: 10px;"
+                            onclick="setPressure()">Set Pressure</button>
+                    </span>
                 </div>
 
-                <span style="display: inline;">
-                    <span id="fan-speed-slider-output" class="slider-output"></span>
-                    <br>
-                    <button id="fan-speed-submit" class="slider-submit-button" onclick="setFanSpeed()">Set
-                        Fan-Speed</button>
-                </span>
-            </div>
 
+
+                <div id="fan-speed-input-div" hidden>
+                    <label style="position: relative; top: 5px;">Select fan-speed between 0% and 100%</label><br>
+                    <div class="slidecontainer">
+                        <input type="range" min="0" max="100" value="50" class="slider" id="fan-speed-slider">
+                    </div>
+
+                    <span style="display: inline;">
+                        <span id="fan-speed-slider-output" class="slider-output"></span>
+                        <br>
+                        <button id="fan-speed-submit" class="btn btn_color" style="margin-top: 10px;" onclick="
+                        setFanSpeed()">Set
+                            Fan-Speed</button>
+                    </span>
+                </div>
+            </div>
 
         </div>
 
 
         <div id="fan-raw-data">
 
-            <div id="pressure-div">
+            <div id="pressure-div" class="fan-raw-data-divs">
                 <span class="fan-raw-data-headings">Pressure </span>
                 <br>
                 <span class="fan-raw-data-values" id="pressure"></span>
             </div>
 
-            <div id="speed-div">
+            <div id="speed-div" class="fan-raw-data-divs">
                 <span class="fan-raw-data-headings">Fan-Speed </span>
                 <br>
                 <span class="fan-raw-data-values" id="speed"></span>
             </div>
 
-            <div id="setpoint-div">
+            <div id="setpoint-div" class="fan-raw-data-divs">
                 <span class="fan-raw-data-headings">Setpoint</span>
                 <br>
                 <span class="fan-raw-data-values" id="setpoint"></span>
             </div>
 
-            <div id="mode-div">
+            <div id="mode-div" class="fan-raw-data-divs">
                 <span class="fan-raw-data-headings">Mode </span>
                 <br>
                 <span class="fan-raw-data-values" id="mode"></span>
@@ -109,25 +115,51 @@
 
 
         <div id="time-period-input-div">
-            <label class="underline">Set Time Period</label><br><br>
-            <label>Start Time</label>
-            <input type="time" step="3600000" id="time-period-from-input" name="time-period-from-input" value="16:00">
-            <label>End Time</label>
-            <input type="time" step="3600000" id="time-period-to-input" name="time-period-to-input" value="21:00">
+            <label style="position:relative; top: 3px;" class="underline time-date-labels">Set Time
+                Period</label><br><br>
+
+            <div id="time" class="time-and-date">
+                <div id="start-time" class="time-date-input-div" style="right: 50px;">
+                    <label class="underline">Start Time</label><br>
+                    <input class="time-and-date-inputs" type="time" step="3600000" id="time-period-from-input"
+                        name="time-period-from-input" value="14:00">
+                </div>
+
+                <div id="end-time" class="time-date-input-div" style="left: 50px;">
+                    <label class="underline">End Time</label><br>
+                    <input class="time-and-date-inputs" type="time" step="3600000" id="time-period-to-input"
+                        name="time-period-to-input" value="22:00">
+                </div>
+            </div>
             <br>
-            <label>Start Date</label>
-            <input type="date" id="date-input-start" name="date-input-start" min="2021-01-01" max="2021-12-31">
-            <!-- <br> -->
-            <label>End Date</label>
-            <input type="date" id="date-input-end" name="date-input-end" min="2021-01-01" max="2021-12-31">
-            <br><br>
+
+            <div id="date" class="time-and-date">
+                <div id="start-date" class="time-date-input-div" style="right: 30px;">
+                    <label class="underline">Start Date</label><br>
+                    <input class="time-and-date-inputs" type="date" id="date-input-start" name="date-input-start"
+                        min="2021-10-27" max="2021-12-31" value="2021-10-27">
+                </div>
+                <div id="end-date" class="time-date-input-div" style="left: 30px;">
+                    <label class="underline">End Date</label><br>
+                    <input class="time-and-date-inputs" type="date" id="date-input-end" name="date-input-end"
+                        min="2021-01-01" max="2021-12-31" value="2021-10-29">
+                </div>
+            </div>
+
 
 
         </div>
-        <input type="button" class="btn btn_color btn_border" value="Submit" onclick="setTimePeriodAndDate()">
-        <div id="reset-graph-div">
-            <button id="reset-graph-button" class="button btn btn_color" onclick=showCurrentDataInGraph()>Show current
+
+        <div id="submit-and-current-graph-buttons" style="display:flex">
+
+            <button id="reset-graph-button" style="margin-right: 5px;" class="button btn btn_color bot-buttons"
+                onclick=showCurrentDataInGraph()>Show
+                current
                 Graph</button>
+
+            <input type="button" style="margin-left: 5px;" class="btn btn_color btn_border bot-buttons" value="Submit"
+                onclick="setTimePeriodAndDate()">
+
         </div>
         <br><br>
 
