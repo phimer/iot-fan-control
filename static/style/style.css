@@ -269,6 +269,11 @@ margin-bottom: 20px;
   border-spacing: 0px;
   border-radius: 0px;
   text-align: left;
+
+}
+
+th, td {
+  padding-right:10px;
 }
 
 
@@ -285,6 +290,7 @@ margin-bottom: 20px;
   
   border-color: cyan;
   color: cyan;
+  margin-left: 10px;
 
 }
 
@@ -304,5 +310,6 @@ margin-bottom: 20px;
 .hover_boarder li:hover{
 
   border-bottom: 3px solid cyan;
+  border-radius: 0px;
 
 }

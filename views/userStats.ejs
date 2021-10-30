@@ -6,6 +6,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="/style/style.css">
     <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 </head>
 
@@ -24,21 +25,24 @@
 
     <% data.userData.forEach((value,key)=> { %>
 
-        <button class="user-stats-button">
+        <button class="user-stats-button" onclick="showActivityOfUser('<%=value._id%>')">
             <%=value._id%>
         </button>
 
+
+
         <% }) %>
 
-            <button class="user-stats-button">ALL</button>
+            <button class="user-stats-button" onclick="showAllUsers()">ALL</button>
+
 
 
             <% data.userData.forEach((value,key)=> { %>
 
 
-                <div id=<%=value._id %>>
+                <div id=<%=value._id %> class="user-activity-class">
 
-                    <div style="margin:0 0 5px 25px; font-weight: bold; text-decoration:underline;">
+                    <div style="margin: 20px 0 0px 10px; font-weight: bold; font-size: 30px; color: cyan;">
                         <%= value._id %>
 
                     </div>
@@ -58,6 +62,9 @@
                                 <td>
                                     <%=value2.loginTime %>
                                 </td>
+                                <td>
+                                    <%=value2.activity %>
+                                </td>
                             </tr>
 
                             <% }) %>
@@ -69,6 +76,8 @@
 
                 </div>
                 <% }) %>
+
+
 
 
 

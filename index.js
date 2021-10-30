@@ -217,7 +217,7 @@ app.get('/fan-control', async (req, res) => {
 
     const authheader = req.headers.authorization;
 
-    saveUserActivity(authheader, '/fan-control');
+    saveUserActivity(authheader, 'navigating fan-control page');
 
     res.status(200).sendFile(path.join(directory, 'fanControl.html'));
 
@@ -228,9 +228,9 @@ app.get('/fan-control', async (req, res) => {
 //user stats ++ 
 app.get('/user-stats', async (req, res) => {
 
-    const authheader = req.headers.authentication;
+    const authheader = req.headers.authorization;
 
-    saveUserActivity(authheader, '/user-stats');
+    saveUserActivity(authheader, 'looking at user statistics');
 
     const userData = await userDataCollection.aggregate([
         {
@@ -238,7 +238,8 @@ app.get('/user-stats', async (req, res) => {
                 _id: "$user_name",
                 loginTimes: {
                     "$push": {
-                        loginTime: "$login_time"
+                        loginTime: "$login_time",
+                        activity: "$activity"
                     }
                 }
             }
@@ -271,6 +272,31 @@ app.get('/user-stats', async (req, res) => {
 })
 //user stats --
 
+//get routings to track user activity ++
+app.get('/pressure', async (req, res) => {
+
+    const authheader = req.headers.authorization;
+
+    saveUserActivity(authheader, 'adjusting pressure');
+
+})
+
+app.get('/fan-speed', async (req, res) => {
+
+    const authheader = req.headers.authorization;
+
+    saveUserActivity(authheader, 'adjusting fan-speed');
+
+})
+
+app.get('/aggregate-data', async (req, res) => {
+
+    const authheader = req.headers.authorization;
+
+    saveUserActivity(authheader, 'looking at aggregate data');
+
+})
+//get routings to track user activity --
 
 
 //websocket ++
@@ -432,7 +458,7 @@ const addOneHourToHourMinuteString = async (hourMinuteString) => {
     return `${hourPlusOne}:${splits[1]}`;
 }
 
-const saveUserActivity = async (authheader, url) => {
+const saveUserActivity = async (authheader, activity) => {
 
 
     const auth = new Buffer.from(authheader.split(' ')[1],
@@ -442,7 +468,7 @@ const saveUserActivity = async (authheader, url) => {
 
     const loginTime = new Date();
 
-    const result = await userDataCollection.insertOne({ user_name: user, login_time: loginTime, activity: url });
+    const result = await userDataCollection.insertOne({ user_name: user, login_time: loginTime, activity: activity });
 
 }
 //helper --

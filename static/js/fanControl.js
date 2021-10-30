@@ -292,6 +292,9 @@ const setPressure = async () => {
     showCurrentDataInGraph();
 
     $('#setpoint').empty().append(pressure);
+
+    //fetch pressure to log user statistics
+    fetch('http://localhost:3000/pressure');
 }
 
 
@@ -315,6 +318,8 @@ const setFanSpeed = () => {
     //change graph to recent data points (if user is looking at time data and sets new pressure graph should update)
     //not sure if graph should update or not??
     showCurrentDataInGraph();
+
+    fetch('http://localhost:3000/fan-speed');
 }
 
 
@@ -350,6 +355,8 @@ const setTimePeriodAndDate = () => {
 
 
     ws.send(JSON.stringify(timePeriodData));
+
+    fetch('https://localhost:3000/aggregate-data');
 
 }
 
