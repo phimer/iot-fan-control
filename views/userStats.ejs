@@ -5,20 +5,75 @@
     <meta charset="UTF-8">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="/style/style.css">
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
 
 </head>
 
 <body>
-    <p>hello</p>
+
+    <ul class="flex items-center justify-between  bg-gray-200">
+        <li class="ml-2 p-3">
+            <button class="button" style="float:right;" onclick=backToFanControl()>Back to Fan-Control</button>
+        </li>
+        <li class="mr-2 p-3 ">
+            <button style="float: right;" class="button" onclick=logout()>Logout</button>
+        </li>
+    </ul>
+    <br>
+
+    <% data.userData.forEach((value,key)=> { %>
+
+        <button>
+            <%=value._id%>
+        </button>
+
+        <% }) %>
+
+            <button>all</button>
+
+
+            <% data.userData.forEach((value,key)=> { %>
+
+
+                <div id=<%=value._id %>>
+
+                    <div style="margin:0 0 5px 25px; font-weight: bold; text-decoration:underline;">
+                        <%= value._id %>
+
+                    </div>
+                    <table class="user-stats-table">
+                        <tr>
+                            <th>
+                                Login Time
+                            </th>
+                            <th>
+                                Activity
+                            </th>
+                        </tr>
+
+                        <% value.loginTimes.forEach((value2, key2)=> { %>
+                            <tr>
+
+                                <td>
+                                    <%=value2.loginTime %>
+                                </td>
+                            </tr>
+
+                            <% }) %>
+
+
+
+
+                    </table>
+
+                </div>
+                <% }) %>
 
 
 
 
 
-
-
-
-    <script src="/js/userStats.js"></script>
+                    <script src="/js/userStats.js"></script>
 
 
 </body>

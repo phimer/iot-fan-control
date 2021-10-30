@@ -227,10 +227,42 @@ app.get('/fan-control', async (req, res) => {
 //user stats ++  //rapha
 app.get('/user-stats', async (req, res) => {
 
-    const userData = await userDataCollection.find({}).toArray();
-    log(userData);
 
-    res.status(200).render('userStats');
+    const userData = await userDataCollection.aggregate([
+        {
+            $group: {
+                _id: "$user_name",
+                loginTimes: {
+                    "$push": {
+                        loginTime: "$login_time"
+                    }
+                }
+            }
+        }
+    ]).toArray();
+
+
+    userData.forEach((value, key) => {
+        log(value._id);
+        log(value.loginTimes[0])
+        value.loginTimes.forEach((value2, key2) => {
+
+            let date = new Date(value2.loginTime);
+            // const options = { weekday }
+
+
+            value2.loginTime = date.toLocaleString();
+
+            //value2.loginTime = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+
+        })
+    })
+
+    res.status(200).render('userStats', {
+        data: {
+            userData: userData
+        }
+    });
 
 })
 //user stats --
