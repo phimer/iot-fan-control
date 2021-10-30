@@ -133,9 +133,6 @@ const authentication = async (req, res, next) => {
 
         log(`user ${user} authenticated`)
 
-        const loginTime = new Date();
-
-        const result = await userDataCollection.insertOne({ user_name: user, login_time: loginTime });
 
 
         next(); //calls next middleware function in the stack
@@ -218,15 +215,22 @@ const hash = async password => {
 //routings after authentication ++
 app.get('/fan-control', async (req, res) => {
 
+    const authheader = req.headers.authorization;
+
+    saveUserActivity(authheader, '/fan-control');
+
     res.status(200).sendFile(path.join(directory, 'fanControl.html'));
 
 })
 
 //routings after authentication --
 
-//user stats ++  //rapha
+//user stats ++ 
 app.get('/user-stats', async (req, res) => {
 
+    const authheader = req.headers.authentication;
+
+    saveUserActivity(authheader, '/user-stats');
 
     const userData = await userDataCollection.aggregate([
         {
@@ -426,6 +430,20 @@ const addOneHourToHourMinuteString = async (hourMinuteString) => {
     const hourPlusOne = (parseInt(splits[0]) + 1).toString();
 
     return `${hourPlusOne}:${splits[1]}`;
+}
+
+const saveUserActivity = async (authheader, url) => {
+
+
+    const auth = new Buffer.from(authheader.split(' ')[1],
+        'base64').toString().split(':');
+    const user = auth[0];
+
+
+    const loginTime = new Date();
+
+    const result = await userDataCollection.insertOne({ user_name: user, login_time: loginTime, activity: url });
+
 }
 //helper --
 
