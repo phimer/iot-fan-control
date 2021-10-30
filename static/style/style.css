@@ -274,5 +274,35 @@ margin-bottom: 20px;
 
 
 .user-stats-button {
+  
+  border: 2px solid black;
+  background-color: white;
+  /* color: black; */
+  padding: 7px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  
+  border-color: cyan;
+  color: cyan;
+
+}
+
+.user-stats-button:hover{
+
+  background-color: cyan;
+  color: white;
+
+}
+
+.hover_boarder li{
+
+  border-bottom: 3px solid transparent;
+  
+}
+
+.hover_boarder li:hover{
+
+  border-bottom: 3px solid cyan;
 
 }
