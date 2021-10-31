@@ -13,8 +13,6 @@ app.use(express.static('static', { index: '_' }));
 app.set('view engine', 'ejs');
 
 
-
-
 //extra
 const path = require('path');
 const util = require('util');
