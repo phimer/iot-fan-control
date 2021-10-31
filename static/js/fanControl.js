@@ -6,7 +6,7 @@ const DATAPOINTS = 15;
 let GRAPH_IS_IN_CONTINOUS_MODE = true;
 
 let waitForPressureToSettle = false;
-const WAIT_FOR_PRESSURE_TO_SETTLE_TIMEOUT = 40000;
+const WAIT_FOR_PRESSURE_TO_SETTLE_TIMEOUT = 60000;
 
 
 //connection to server websocket

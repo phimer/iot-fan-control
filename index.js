@@ -334,6 +334,8 @@ wss.on("connection", async ws => {
 
             const dataForFan = {};
 
+            log('dataForFan', clientData)
+
             if (clientData.mode === 'auto') {
                 log("pressure set by client: " + clientData.pressure);
                 dataForFan.auto = true;
