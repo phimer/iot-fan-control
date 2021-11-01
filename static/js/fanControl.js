@@ -543,9 +543,10 @@ const setCurrentDateInDatePicker = async () => {
 
     const date = new Date();
 
+    const isoDate = date.toISOString().split('T')[0];
 
-    $('#date-input-start').val(`2021-${(date.getMonth()) + 1}-${date.getDate()}`);
-    $('#date-input-end').val(`2021-${(date.getMonth()) + 1}-${date.getDate()}`);
+    $('#date-input-start').val(isoDate);
+    $('#date-input-end').val(isoDate);
 }
 
 setCurrentDateInDatePicker();
