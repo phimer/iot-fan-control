@@ -271,28 +271,31 @@ app.get('/user-stats', async (req, res) => {
 //user stats --
 
 //get routings to track user activity ++
-app.get('/pressure', (req, res) => {
+app.get('/pressure', async (req, res) => {
 
     log('pressure')
 
     const authheader = req.headers.authorization;
 
-    saveUserActivity(authheader, 'adjusting pressure');
+    await saveUserActivity(authheader, 'adjusting pressure');
+
+    res.status(200).send("ok");
 
 })
 
-app.get('/fan-speed', (req, res) => {
+app.get('/fan-speed', async (req, res) => {
 
 
     log('fan-speed')
 
     const authheader = req.headers.authorization;
 
-    saveUserActivity(authheader, 'adjusting fan-speed');
+    await saveUserActivity(authheader, 'adjusting fan-speed');
+    res.status(200).send("ok");
 
 })
 
-app.get('/aggregate-data', (req, res) => {
+app.get('/aggregate-data', async (req, res) => {
 
     // log("AGGGREGATE DATA")
 
@@ -300,7 +303,8 @@ app.get('/aggregate-data', (req, res) => {
 
     const authheader = req.headers.authorization;
 
-    saveUserActivity(authheader, 'looking at aggregate data');
+    await saveUserActivity(authheader, 'looking at aggregate data');
+    res.status(200).send("ok");
 
 })
 //get routings to track user activity --
