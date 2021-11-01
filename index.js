@@ -289,6 +289,8 @@ app.get('/fan-speed', async (req, res) => {
 
 app.get('/aggregate-data', async (req, res) => {
 
+    // log("AGGGREGATE DATA")
+
     const authheader = req.headers.authorization;
 
     saveUserActivity(authheader, 'looking at aggregate data');
@@ -350,8 +352,10 @@ wss.on("connection", async ws => {
         } else if (clientData.identifier === 'time-period-data') {
 
 
-            const dateStringStart = `2021-${clientData.startMonth}-${clientData.startDay}`;
-            const dateStringEnd = `2021-${clientData.endMonth}-${clientData.endDay}`;
+
+
+            const dateStringStart = `2021-${await addLeadingZero(clientData.startMonth)}-${await addLeadingZero(clientData.startDay)}`;
+            const dateStringEnd = `2021-${await addLeadingZero(clientData.endMonth)}-${await addLeadingZero(clientData.endDay)}`;
 
             log(`dateStringStart: ${dateStringStart}`)
             log(`dateStringEnd: ${dateStringEnd}`)
@@ -399,6 +403,7 @@ wss.on("connection", async ws => {
 
             // log("aggregated fanData From DB: ", dataArray);
 
+            log(dataArray);
 
             const fanDataForTimePeriod = {};
             fanDataForTimePeriod.identifier = 'aggregate-data';
@@ -455,7 +460,7 @@ const addOneHourToHourMinuteString = async (hourMinuteString) => {
     const splits = hourMinuteString.split(':');
     const hourPlusOne = (parseInt(splits[0]) + 1).toString();
 
-    return `${hourPlusOne}:${splits[1]}`;
+    return `${await addLeadingZero(hourPlusOne)}:${splits[1]}`;
 }
 
 const saveUserActivity = async (authheader, activity) => {
@@ -469,6 +474,13 @@ const saveUserActivity = async (authheader, activity) => {
     const loginTime = new Date();
 
     const result = await userDataCollection.insertOne({ user_name: user, login_time: loginTime, activity: activity });
+
+}
+
+const addLeadingZero = async (value) => {
+
+    const result = (value < 10 ? '0' : '') + value;
+    return result;
 
 }
 //helper --

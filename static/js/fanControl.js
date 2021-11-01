@@ -236,7 +236,10 @@ const createDateString = (data, options = {}) => {
 
         const date = new Date(data.firstDateInGroup); //"2021-10-27T16:22:35.837"
 
-        aggregateDataDateString = `${date.getDate()}-${date.getMonth() + 1} - ${data.firstHourDataPointInGroup}:00`;
+        const day = (date.getDate() < 10 ? '0' : '') + date.getDate();
+        const month = (date.getMonth() < 10 ? '0' : '') + date.getMonth();
+
+        aggregateDataDateString = `${day}-${month} - ${data.firstHourDataPointInGroup}:00`;
         return aggregateDataDateString;
     }
 
@@ -341,6 +344,7 @@ const setTimePeriodAndDate = () => {
     const endMonth = endDate.getMonth() + 1;
 
     log("timeStart: " + timeStart)
+    log("timeEnd: " + timeEnd)
 
     const timePeriodData = {};
     timePeriodData.timeStart = timeStart;
@@ -356,7 +360,7 @@ const setTimePeriodAndDate = () => {
 
     ws.send(JSON.stringify(timePeriodData));
 
-    fetch('https://localhost:3000/aggregate-data');
+    fetch('http://localhost:3000/aggregate-data');
 
 }
 
